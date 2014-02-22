@@ -1,0 +1,35 @@
+@(user: User)(content: Html)
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CBSR Container Database</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")"> 
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/alert.css")"> 
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/button.css")"> 
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/pagination.css")"> 
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/form.css")"> 
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/input.css")"> 
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/table.css")"> 
+  </head>
+
+  <body> 
+    <header>
+      <a id="logo" href="@routes.ContainerController.index">       
+	<img src="@routes.Assets.at("images/logo1.png")" align="left">
+	Temperature Monitor
+      </a>
+
+      <dl id="user">
+	<dt>@user.name (@user.email)</dt>
+	<dd>
+	  <a href="@routes.Application.logout()">Logout</a>
+	</dd>
+      </dl>
+    </header>
+
+    <section>
+      @content
+    </section> 
+  </body>
+</html>

@@ -1,0 +1,123 @@
+@(currentPage: Page[ContainerListView], currentOrderBy: Int, currentFilter: String, user: User)(implicit flash: play.api.mvc.Flash)
+
+@import java.util.{Date}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+  routes.ContainerController.list(
+    newPage, 
+    newOrderBy.map { orderBy =>
+      if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+    }.getOrElse(currentOrderBy), 
+    currentFilter
+  ) 
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(orderBy: Int, title: String) = {
+<th class="col@orderBy header @if(scala.math.abs(currentOrderBy) == orderBy) @{if(currentOrderBy < 0) "headerSortDown" else "headerSortUp"}">
+  <a href="@link(0, Some(orderBy))">@title</a>
+</th>
+}
+
+@main(user = user) {
+<sectionHeader>
+  <headerLeft>
+    @helper.form(action=routes.ContainerController.list()) {
+    <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by container name...">
+    <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+    }
+  </headerLeft>
+  <headerRight>
+    <a class="btn success" id="add" href="@routes.ContainerController.create()">
+      Add a new container
+    </a> 
+  </headerRight>
+</sectionHeader>
+
+<sectionSubHeader>
+  @flash.get("success").map { message =>
+  <div class="alert-message warning">
+    <strong>Done!</strong> @message
+  </div>
+  }
+</sectionSubHeader>
+
+<sectionBody>
+  <table class="containers zebra-striped">
+    @Option(currentPage.items).filterNot(_.isEmpty).map { containers => 
+    <thead>
+      <tr>
+	@header(1, "Container ID")
+	@header(2, "Container Name")
+        @header(3, "Temperature")
+        @header(4, "Container Status")
+        @header(5, "Last Read Time")
+      </tr>
+    </thead>
+    <tbody>
+      @containers.map { 
+      case container => {
+      <tr>
+	<td>
+	  @container.index
+	</td>
+        <td> 
+	  <a href="@routes.ContainerController.details(index=container.index)">
+	    @container.name
+	  </a> 
+	</td>
+	<td>
+	  @container.lastReadTemperature.getOrElse { <em>-</em> }
+	</td>
+	<td>
+	  @container.lastReadStatus.getOrElse { <em>-</em> }
+	</td>
+	<td>
+	  @container.lastReadTime.getOrElse { <em>-</em> }
+	</td>
+      </tr>
+      }
+      }    
+    </tbody>
+  </table>
+</sectionBody>
+<sectionFooter>
+      <ul class="pagination">
+	@currentPage.prev.map { page =>
+	<li class="prev">
+          <a href="@link(page)">&larr; Previous</a>
+	</li> 
+	}.getOrElse {
+	<li class="prev disabled">
+          <a>&larr; Previous</a>
+	</li>
+	}
+	<li class="current">
+          <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + containers.size) of @currentPage.total</a>
+	</li>
+	
+	@currentPage.next.map { page =>
+	<li class="next">
+          <a href="@link(page)">Next &rarr;</a>
+	</li> 
+	}.getOrElse {
+	<li class="next disabled">
+          <a>Next &rarr;</a>
+	</li>          
+	}
+      </ul>
+</sectionFooter>
+  }.getOrElse {
+  <div class="well">
+    <em>Nothing to display</em>
+  </div>
+  }  
+}
+      
+      
+      

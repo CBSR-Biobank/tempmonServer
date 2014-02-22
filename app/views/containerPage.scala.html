@@ -1,0 +1,100 @@
+@(currentPage: Page[ContainerReadData], currentOrderBy:Int, container: Container, user: User, index: Long)
+
+@import helper._
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@import java.util.{Date}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+  routes.ContainerController.details(
+    index, 
+    newPage, 
+    newOrderBy.map { orderBy =>
+      if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+    }.getOrElse(currentOrderBy)) 
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(orderBy: Int, title: String) = {
+<th>
+  <a>@title</a>
+</th>
+}
+
+@main(user = user) {
+<sectionHeader style="height:20px">
+  <div class="page-header" style="float:left;">
+    @container.name #@index's temperature readings:
+  </div>
+  <a href="@routes.ContainerController.edit(index)" class="page-header" style="float:right; margin-right:25%">
+    Change this container's specifications 
+  </a>
+</sectionHeader>
+
+<sectionBody style="width:75%;">
+  <table class="containers zebra-striped">
+    @Option(currentPage.items).filterNot(_.isEmpty).map { readings => 
+    <thead>
+      <tr>
+        @header(1, "Temperature")
+        @header(2, "Container Status")
+        @header(3, "Read Time")
+      </tr>
+    </thead>
+    <tbody>
+      @readings.map { 
+      case reading => {
+      <tr>
+	<td>
+	  @reading.readTemperature
+	</td>
+	<td>
+	  @reading.readStatus
+	</td>
+	<td>
+	  @reading.readTime
+	</td>
+      </tr>
+      }
+      }    
+    </tbody>
+  </table>
+</sectionBody>
+<sectionFooter>
+      <ul class="pagination" style="margin-left:20%; width=25%">
+	@currentPage.prev.map { page =>
+	<li class="prev">
+          <a href="@link(page)">&larr; More recent</a>
+	</li> 
+	}.getOrElse {
+	<li class="prev disabled">
+          <a>&larr; More recent</a>
+	</li>
+	}
+	<li class="current">
+          <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + readings.size) of @currentPage.total</a>
+	</li>
+	
+	@currentPage.next.map { page =>
+	<li class="next">
+          <a href="@link(page)">Less recent &rarr;</a>
+	</li> 
+	}.getOrElse {
+	<li class="next disabled">
+          <a>Less recent &rarr;</a>
+	</li>          
+	}
+      </ul>
+</sectionFooter>
+  }.getOrElse {
+  <div class="well">
+    <em style="margin-left:40%">Nothing to display</em>
+  </div>
+  }  
+
+}
