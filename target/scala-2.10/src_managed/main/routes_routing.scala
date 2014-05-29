@@ -1,6 +1,6 @@
 // @SOURCE:/home/connor/workspace/ScalaTempmon/conf/routes
-// @HASH:ed82c1c799b41eb7296653fc16fcca5477d3b90d
-// @DATE:Sat Feb 22 15:03:06 MST 2014
+// @HASH:98e44e0c6c5e84ff2ccf07de762eb17bd4f60be5
+// @DATE:Thu May 22 15:30:35 MDT 2014
 
 
 import play.core._
@@ -57,7 +57,7 @@ private[this] lazy val controllers_ContainerController_save6 = Route("POST", Pat
         
 
 // @LINE:20
-private[this] lazy val controllers_ContainerController_details7 = Route("GET", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("index", """[^/]+""",true))))
+private[this] lazy val controllers_ContainerController_details7 = Route("GET", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("index", """[^/]+""",true),StaticPart("/readings"))))
         
 
 // @LINE:23
@@ -69,25 +69,33 @@ private[this] lazy val controllers_ContainerController_update9 = Route("POST", P
         
 
 // @LINE:27
-private[this] lazy val controllers_ContainerController_clientPackage10 = Route("PUT", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("id", """[^/]+""",true),StaticPart("/specifications/clientpkg.json"))))
+private[this] lazy val controllers_ContainerController_editNote10 = Route("GET", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("index", """[^/]+""",true),StaticPart("/readings/"),DynamicPart("readID", """[^/]+""",true),StaticPart("/note"))))
         
 
 // @LINE:28
-private[this] lazy val controllers_ContainerController_handleUpload11 = Route("PUT", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("id", """[^/]+""",true),StaticPart("/uploadpkg.json"))))
+private[this] lazy val controllers_ContainerController_updateNote11 = Route("POST", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("index", """[^/]+""",true),StaticPart("/readings/"),DynamicPart("readID", """[^/]+""",true),StaticPart("/note"))))
         
 
 // @LINE:31
-private[this] lazy val controllers_ContainerController_delete12 = Route("POST", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("id", """[^/]+""",true),StaticPart("/delete"))))
+private[this] lazy val controllers_ContainerController_clientPackage12 = Route("PUT", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("id", """[^/]+""",true),StaticPart("/specifications/clientpkg.json"))))
         
 
-// @LINE:34
-private[this] lazy val controllers_Assets_at13 = Route("GET", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("assets/"),DynamicPart("file", """.+""",false))))
+// @LINE:32
+private[this] lazy val controllers_ContainerController_handleUpload13 = Route("PUT", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("id", """[^/]+""",true),StaticPart("/uploadpkg.json"))))
         
 
-// @LINE:37
-private[this] lazy val controllers_Application_untrail14 = Route("GET", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),DynamicPart("path", """.+""",false),StaticPart("/"))))
+// @LINE:35
+private[this] lazy val controllers_ContainerController_delete14 = Route("POST", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("containers/"),DynamicPart("id", """[^/]+""",true),StaticPart("/delete"))))
         
-def documentation = List(("""GET""", prefix,"""controllers.ContainerController.index"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """login""","""controllers.Application.login"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """authenticate""","""controllers.Application.authenticate"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """logout""","""controllers.Application.logout"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers""","""controllers.ContainerController.list(p:Int ?= 0, s:Int ?= 1, f:String ?= "")"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/new""","""controllers.ContainerController.create"""),("""POST""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers""","""controllers.ContainerController.save"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$index<[^/]+>""","""controllers.ContainerController.details(index:Long, p:Int ?= 0, s:Int ?= -3)"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$index<[^/]+>/specifications/edit""","""controllers.ContainerController.edit(index:Long)"""),("""POST""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/edit""","""controllers.ContainerController.update(id:Long)"""),("""PUT""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$id<[^/]+>/specifications/clientpkg.json""","""controllers.ContainerController.clientPackage(id:Long)"""),("""PUT""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$id<[^/]+>/uploadpkg.json""","""controllers.ContainerController.handleUpload(id:Long)"""),("""POST""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$id<[^/]+>/delete""","""controllers.ContainerController.delete(id:Long)"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """assets/$file<.+>""","""controllers.Assets.at(path:String = "/public", file:String)"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """$path<.+>/""","""controllers.Application.untrail(path:String)""")).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
+
+// @LINE:38
+private[this] lazy val controllers_Assets_at15 = Route("GET", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),StaticPart("assets/"),DynamicPart("file", """.+""",false))))
+        
+
+// @LINE:41
+private[this] lazy val controllers_Application_untrail16 = Route("GET", PathPattern(List(StaticPart(Routes.prefix),StaticPart(Routes.defaultPrefix),DynamicPart("path", """.+""",false),StaticPart("/"))))
+        
+def documentation = List(("""GET""", prefix,"""controllers.ContainerController.index"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """login""","""controllers.Application.login"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """authenticate""","""controllers.Application.authenticate"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """logout""","""controllers.Application.logout"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers""","""controllers.ContainerController.list(p:Int ?= 0, s:Int ?= 1, f:String ?= "")"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/new""","""controllers.ContainerController.create"""),("""POST""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers""","""controllers.ContainerController.save"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$index<[^/]+>/readings""","""controllers.ContainerController.details(index:Long, p:Int ?= 0, s:Int ?= -3)"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$index<[^/]+>/specifications/edit""","""controllers.ContainerController.edit(index:Long)"""),("""POST""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/edit""","""controllers.ContainerController.update(id:Long)"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$index<[^/]+>/readings/$readID<[^/]+>/note""","""controllers.ContainerController.editNote(index:Long, readID:Long)"""),("""POST""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$index<[^/]+>/readings/$readID<[^/]+>/note""","""controllers.ContainerController.updateNote(index:Long, readID:Long)"""),("""PUT""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$id<[^/]+>/specifications/clientpkg.json""","""controllers.ContainerController.clientPackage(id:Long)"""),("""PUT""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$id<[^/]+>/uploadpkg.json""","""controllers.ContainerController.handleUpload(id:Long)"""),("""POST""", prefix + (if(prefix.endsWith("/")) "" else "/") + """containers/$id<[^/]+>/delete""","""controllers.ContainerController.delete(id:Long)"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """assets/$file<.+>""","""controllers.Assets.at(path:String = "/public", file:String)"""),("""GET""", prefix + (if(prefix.endsWith("/")) "" else "/") + """$path<.+>/""","""controllers.Application.untrail(path:String)""")).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
   case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
   case l => s ++ l.asInstanceOf[List[(String,String,String)]] 
 }}
@@ -154,7 +162,7 @@ case controllers_ContainerController_save6(params) => {
 // @LINE:20
 case controllers_ContainerController_details7(params) => {
    call(params.fromPath[Long]("index", None), params.fromQuery[Int]("p", Some(0)), params.fromQuery[Int]("s", Some(-3))) { (index, p, s) =>
-        invokeHandler(controllers.ContainerController.details(index, p, s), HandlerDef(this, "controllers.ContainerController", "details", Seq(classOf[Long], classOf[Int], classOf[Int]),"GET", """ View container""", Routes.prefix + """containers/$index<[^/]+>"""))
+        invokeHandler(controllers.ContainerController.details(index, p, s), HandlerDef(this, "controllers.ContainerController", "details", Seq(classOf[Long], classOf[Int], classOf[Int]),"GET", """ View container""", Routes.prefix + """containers/$index<[^/]+>/readings"""))
    }
 }
         
@@ -176,39 +184,55 @@ case controllers_ContainerController_update9(params) => {
         
 
 // @LINE:27
-case controllers_ContainerController_clientPackage10(params) => {
+case controllers_ContainerController_editNote10(params) => {
+   call(params.fromPath[Long]("index", None), params.fromPath[Long]("readID", None)) { (index, readID) =>
+        invokeHandler(controllers.ContainerController.editNote(index, readID), HandlerDef(this, "controllers.ContainerController", "editNote", Seq(classOf[Long], classOf[Long]),"GET", """ Add note to reading""", Routes.prefix + """containers/$index<[^/]+>/readings/$readID<[^/]+>/note"""))
+   }
+}
+        
+
+// @LINE:28
+case controllers_ContainerController_updateNote11(params) => {
+   call(params.fromPath[Long]("index", None), params.fromPath[Long]("readID", None)) { (index, readID) =>
+        invokeHandler(controllers.ContainerController.updateNote(index, readID), HandlerDef(this, "controllers.ContainerController", "updateNote", Seq(classOf[Long], classOf[Long]),"POST", """""", Routes.prefix + """containers/$index<[^/]+>/readings/$readID<[^/]+>/note"""))
+   }
+}
+        
+
+// @LINE:31
+case controllers_ContainerController_clientPackage12(params) => {
    call(params.fromPath[Long]("id", None)) { (id) =>
         invokeHandler(controllers.ContainerController.clientPackage(id), HandlerDef(this, "controllers.ContainerController", "clientPackage", Seq(classOf[Long]),"PUT", """ Get the JSON representation of the monitor requirements for this container""", Routes.prefix + """containers/$id<[^/]+>/specifications/clientpkg.json"""))
    }
 }
         
 
-// @LINE:28
-case controllers_ContainerController_handleUpload11(params) => {
+// @LINE:32
+case controllers_ContainerController_handleUpload13(params) => {
    call(params.fromPath[Long]("id", None)) { (id) =>
         invokeHandler(controllers.ContainerController.handleUpload(id), HandlerDef(this, "controllers.ContainerController", "handleUpload", Seq(classOf[Long]),"PUT", """""", Routes.prefix + """containers/$id<[^/]+>/uploadpkg.json"""))
    }
 }
         
 
-// @LINE:31
-case controllers_ContainerController_delete12(params) => {
+// @LINE:35
+case controllers_ContainerController_delete14(params) => {
    call(params.fromPath[Long]("id", None)) { (id) =>
         invokeHandler(controllers.ContainerController.delete(id), HandlerDef(this, "controllers.ContainerController", "delete", Seq(classOf[Long]),"POST", """ Delete a container""", Routes.prefix + """containers/$id<[^/]+>/delete"""))
    }
 }
         
 
-// @LINE:34
-case controllers_Assets_at13(params) => {
+// @LINE:38
+case controllers_Assets_at15(params) => {
    call(Param[String]("path", Right("/public")), params.fromPath[String]("file", None)) { (path, file) =>
         invokeHandler(controllers.Assets.at(path, file), HandlerDef(this, "controllers.Assets", "at", Seq(classOf[String], classOf[String]),"GET", """ Map static resources from the /public folder to the /assets URL path""", Routes.prefix + """assets/$file<.+>"""))
    }
 }
         
 
-// @LINE:37
-case controllers_Application_untrail14(params) => {
+// @LINE:41
+case controllers_Application_untrail16(params) => {
    call(params.fromPath[String]("path", None)) { (path) =>
         invokeHandler(controllers.Application.untrail(path), HandlerDef(this, "controllers.Application", "untrail", Seq(classOf[String]),"GET", """ Remove trailing / from GETs""", Routes.prefix + """$path<.+>/"""))
    }

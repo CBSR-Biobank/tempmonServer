@@ -3,6 +3,12 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script>
+      function goBack() {
+      window.history.back()
+      }
+    </script>
+
     <title>CBSR Container Database</title>
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")"> 
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/alert.css")"> 
@@ -15,7 +21,7 @@
 
   <body> 
     <header>
-      <a id="logo" href="@routes.ContainerController.index">       
+      <a style= "color:black" id="logo" href="@routes.ContainerController.index">       
 	<img src="@routes.Assets.at("images/logo1.png")" align="left">
 	Temperature Monitor
       </a>

@@ -31,13 +31,13 @@ Seq[Any](format.raw/*1.101*/("""
     """),_display_(Seq[Any](/*10.6*/inputText(containerForm("name"), '_label -> "Container name"))),format.raw/*10.67*/("""
     """),_display_(Seq[Any](/*11.6*/inputText(containerForm("temperatureExpected"), 
     '_label -> "Operating container temperature"))),format.raw/*12.50*/("""
-
+    
     """),_display_(Seq[Any](/*14.6*/inputText(containerForm("temperatureRange"), 
     '_label -> "Safe temperature range"))),format.raw/*15.41*/("""
     
     """),_display_(Seq[Any](/*17.6*/inputText(containerForm("readFrequency"),
     '_label -> "Read frequency (in seconds)"))),format.raw/*18.46*/("""
-
+    
     """),_display_(Seq[Any](/*20.6*/select(
     containerForm("monitor"), 
     monitors, 
@@ -72,10 +72,10 @@ Seq[Any](format.raw/*1.101*/("""
 }
                 /*
                     -- GENERATED --
-                    DATE: Thu Jan 09 17:31:59 MST 2014
+                    DATE: Fri May 23 10:22:41 MDT 2014
                     SOURCE: /home/connor/workspace/ScalaTempmon/app/views/editForm.scala.html
-                    HASH: bb9d247c8dee41b7bb6a11e748f12a8c3ea5a6ce
-                    MATRIX: 620->1|821->119|853->143|933->100|961->192|998->195|1023->212|1062->214|1156->274|1210->320|1249->322|1304->342|1387->403|1428->409|1548->507|1590->514|1698->600|1744->611|1853->698|1895->705|2071->860|2276->1029|2291->1035|2354->1076|2424->1115|2466->1122|2543->1190|2583->1192|2691->1269|2742->1289
+                    HASH: 02b146e882e0eb0d446c5006140a81991d2d272e
+                    MATRIX: 620->1|821->119|853->143|933->100|961->192|998->195|1023->212|1062->214|1156->274|1210->320|1249->322|1304->342|1387->403|1428->409|1548->507|1594->518|1702->604|1748->615|1857->702|1903->713|2079->868|2284->1037|2299->1043|2362->1084|2432->1123|2474->1130|2551->1198|2591->1200|2699->1277|2750->1297
                     LINES: 19->1|22->3|22->3|23->1|24->3|26->5|26->5|26->5|29->8|29->8|29->8|31->10|31->10|32->11|33->12|35->14|36->15|38->17|39->18|41->20|46->25|53->32|53->32|53->32|55->34|57->36|57->36|57->36|59->38|61->40
                     -- GENERATED --
                 */

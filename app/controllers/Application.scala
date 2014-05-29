@@ -48,21 +48,22 @@ object Application extends Controller with Secured
   def untrail(path: String) = Action {
     MovedPermanently("/" +path)
   }
+
 }
- 
+
 /**
- * Provide security features
- */
-trait Secured 
+  * Provide security features
+  */
+trait Secured
 {
   /**
-   * Retrieve the connected user email.
-   */
+    * Retrieve the connected user email.
+    */
   private def username(request: RequestHeader) = request.session.get("email")
 
   /**
-   * Redirect to login if the user in not authorized.
-   */
+    * Redirect to login if the user in not authorized.
+    */
   private def onUnauthorized(request: RequestHeader) = 
     Results.Redirect(routes.Application.login)
   
@@ -78,5 +79,6 @@ trait Secured
       Action(request => f(user)(request))
     }
   }
+
 }
 

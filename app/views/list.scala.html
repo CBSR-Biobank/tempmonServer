@@ -19,8 +19,8 @@
 * Helper generating table headers *
 ***********************************@
 @header(orderBy: Int, title: String) = {
-<th class="col@orderBy header @if(scala.math.abs(currentOrderBy) == orderBy) @{if(currentOrderBy < 0) "headerSortDown" else "headerSortUp"}">
-  <a href="@link(0, Some(orderBy))">@title</a>
+<th>
+  <span>@title</span>
 </th>
 }
 
@@ -86,7 +86,7 @@
     </tbody>
   </table>
 </sectionBody>
-<sectionFooter>
+<sectionFooter style="margin-left: 35%">
       <ul class="pagination">
 	@currentPage.prev.map { page =>
 	<li class="prev">
@@ -99,8 +99,7 @@
 	}
 	<li class="current">
           <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + containers.size) of @currentPage.total</a>
-	</li>
-	
+	</li>	
 	@currentPage.next.map { page =>
 	<li class="next">
           <a href="@link(page)">Next &rarr;</a>
@@ -114,7 +113,7 @@
 </sectionFooter>
   }.getOrElse {
   <div class="well">
-    <em>Nothing to display</em>
+    <em style="margin-left:45%">Nothing to display</em>
   </div>
   }  
 }

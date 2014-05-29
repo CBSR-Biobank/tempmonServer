@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS container (
 CREATE TABLE IF NOT EXISTS container_list (
   entry_number 	    	   INT PRIMARY KEY AUTO_INCREMENT,
   list_number 		   INT NOT NULL,
-  container_index		   INT NOT NULL,
+  container_index	   INT NOT NULL,
   container_id 		   INT NOT NULL,
   FOREIGN KEY(container_id) 
     REFERENCES container(id) 
@@ -35,18 +35,18 @@ CREATE TABLE IF NOT EXISTS container_list (
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS container_readings (
-  reading_number    	   INT PRIMARY KEY AUTO_INCREMENT,
+  reading_id    	   INT PRIMARY KEY AUTO_INCREMENT,
   container_id 		   INT NOT NULL,
   read_temperature 	   DOUBLE NOT NULL,
   read_status 		   VARCHAR(255) NOT NULL,
-  read_time 		   TIMESTAMP NOT NULL,
+  read_time 		   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  read_note		   VARCHAR(1024),
   FOREIGN KEY(container_id) 
     REFERENCES container(id) 
     ON DELETE CASCADE
 ) ENGINE=INNODB;
 
 # --- !Downs
-
 DROP TABLE IF EXISTS container_list;
 DROP TABLE IF EXISTS container_readings;
 DROP TABLE IF EXISTS user;

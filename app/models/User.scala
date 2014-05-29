@@ -8,6 +8,8 @@ import anorm.SqlParser._
 
 case class User(email: String, name: String, password: String)
 
+case class UserEmail(email: String)
+
 object User {
   // -- Parsers
   
@@ -22,6 +24,12 @@ object User {
     }
   }
   
+  val emailOnly = {
+    get[String]("user.email") map {
+      case email => UserEmail(email)
+    }
+  }
+
   // -- Queries
   
   /**
@@ -117,5 +125,22 @@ object User {
         ).on('email -> email).as(scalar[Int].single)
       }
     }.getOrElse(0)
+  }
+
+  def getByListNum(listNum: Long): List[UserEmail] = {
+    DB.withConnection { implicit connection =>
+      val users = SQL (
+        """
+          select u.email
+          from user as u
+
+          where u.container_list_number = {list_num}
+        """
+      ).on(
+        'list_num -> listNum
+      ).as(User.emailOnly *)
+
+      return users
+    }
   }
 }

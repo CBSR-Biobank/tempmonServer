@@ -22,10 +22,6 @@ table > hd {
   height:28px;
 }
 
-table > bd {
-
-}
-
 table > ft {
   position:relative;
   margin-top:10px;
@@ -187,4 +183,3 @@ table tbody tr:last-child td:last-child {
 .zebra-striped tbody tr:hover td {
   background-color:#3d3d3d;
 }
-

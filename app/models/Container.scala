@@ -16,10 +16,11 @@ import anorm.SqlParser._
 import controllers._
 import utils.timeUtils._
 
+import utils._
+
 import Monitor._
 import Page._
 import User._
-
 
 case class Container(
   id: Pk[Long] = NotAssigned,
@@ -38,9 +39,11 @@ case class ContainerReading(
 )
 
 case class ContainerReadData(
+  readID: Long,
   readTemperature: Double,
   readStatus: String,
-  readTime: Date
+  readTime: Date,
+  readNote: Option[String]
 )
 
 case class ContainerListView(
@@ -68,13 +71,22 @@ case class ContainerCreateData(
   monitorID: Option[Long]
 )
 
+case class ContainerNote(note: String)
+
+case class ContainerReadOverdueData(
+  listNumber: Long,
+  index: Long,
+  name: String,
+  readFrequency: Option[Long],
+  readTime: Option[Date]
+)
 
 object Container
 {
   implicit def javaFloatToDouble(f: java.lang.Float) = f.doubleValue
 
   // -- Parsers 
-  /**
+/**
    * Parse a Container from a ResultSet
    */
   val simple = {
@@ -86,8 +98,8 @@ object Container
     get[Option[Long]]("container.monitor_id") map {
       case (id~name~temperatureExpected~temperatureRange~
           readFrequency~monitorID) =>
-        Container(id, name, temperatureExpected, temperatureRange, readFrequency,
-          monitorID)
+        Container(id, name, temperatureExpected, temperatureRange, 
+          readFrequency, monitorID)
     }
   }
 
@@ -97,17 +109,33 @@ object Container
     get[Option[Double]]("read_temperature") ~
     get[Option[String]]("read_status") ~
     get[Option[Date]]("read_time") map {
-      case (index~name~lastReadTemperature~lastReadStatus~lastReadTime) =>
+      case (index~name~lastReadTemperature~lastReadStatus~
+          lastReadTime) =>
         ContainerListView(index, name, lastReadTemperature, lastReadStatus,
           lastReadTime)
     }
   }
 
   val reading = {
+    get[Long]("container_readings.reading_id") ~
     get[Double]("container_readings.read_temperature") ~
     get[String]("container_readings.read_status") ~
-    get[Date]("container_readings.read_time") map {
-      case (temp~status~date) => ContainerReadData(temp, status, date)
+    get[Date]("container_readings.read_time") ~
+    get[Option[String]]("container_readings.read_note") map {
+      case (id~temp~status~date~note) => 
+        ContainerReadData(id, temp, status, date, note)
+    }
+  }
+
+  val readingOverdue = {
+    get[Long]("container_list.list_number") ~
+    get[Long]("container_list.container_index") ~
+    get[String]("container.name") ~
+    get[Option[Long]]("container.read_frequency") ~
+    get[Option[Date]]("container_readings.read_time") map {
+      case (list_number~index~name~read_frequency~read_time) =>
+        ContainerReadOverdueData(list_number, index, name, read_frequency, 
+          read_time)
     }
   }
 
@@ -121,6 +149,8 @@ object Container
   def toEdit(container: Container) = ContainerEditData(container.name, 
     container.temperatureExpected, container.temperatureRange, 
     container.readFrequency, container.monitorID)
+
+  def toEditNote(reading: ContainerReadData) = ContainerNote(reading.readNote.getOrElse(""))
 
   // -- Queries
   
@@ -181,16 +211,18 @@ object Container
   }
   
   /*
-   * Get all containers belonging to admin with email 'email', and the most recent
-   * reading from each container.
+   * Get all containers belonging to admin with email 'email', and the most 
+   * recent reading from each container.
    */
-  def findUnderAdmin(email: String, page: Int = 0, pageSize: Int = 10,
-    orderBy: Int, filter: String = "%"): Page[ContainerListView] =
-  {
+  def findUnderAdmin(
+    email: String, 
+    page: Int = 0, 
+    pageSize: Int = 10,
+    orderBy: Int, 
+    filter: String = "%"
+  ): Page[ContainerListView] = {
     val offset = pageSize * page
 
-    /* 
-     */
     DB.withConnection { implicit connection =>
       val containers = SQL (
         """ 
@@ -215,11 +247,12 @@ object Container
             SELECT container_id,
                    max(read_time) as max_time
             FROM container_readings
-             
+            
             GROUP BY container_id
-          ) AS fra 
-          ON fra.container_id = frb.container_id 
+          ) AS fra
+          on fra.container_id = frb.container_id 
           AND fra.max_time = frb.read_time
+
         ) AS fr 
         ON fr.container_id = fl.container_id
 
@@ -369,13 +402,13 @@ object Container
     DB.withConnection { implicit connection =>
       SQL(
         """
-            SELECT user.* 
-            FROM user u
+          SELECT user.* 
+          FROM user u
 
-            JOIN container_list l 
-            ON l.list_number = u.container_list_number
+          JOIN container_list l 
+          ON l.list_number = u.container_list_number
 
-            where l.container_id = {containerID}
+          where l.container_id = {containerID}
         """
       ).on(
         'containerID -> container.id.get
@@ -430,10 +463,8 @@ object Container
       Json.obj(
         "specifications" -> Json.obj(
           "nextUpdateIn"->roundTime(((lastRead+(freq*1000)-now))/1000).toString(),
-
           "expectedTemperature" -> temp,
           "temperatureRange" -> tempRange,
-
           "monitor" -> monitor,
           "uploadURL" -> uploadURL
         )
@@ -477,6 +508,29 @@ object Container
     }
   }
 
+  def addNote(
+    containerID: anorm.Pk[Long],
+    readID: Long,
+    containerNote: String
+  ) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          UPDATE container_readings
+            SET read_note = {note},
+                read_time = read_time
+
+            WHERE container_id = {id}
+            AND reading_id = {read_id}
+        """
+      ).on(
+        'note -> containerNote,
+        'id -> containerID,
+        'read_id -> readID
+      ).executeUpdate()
+    }
+  }
+
   def notifyAdmins(
     index: Long, 
     email: String, 
@@ -490,12 +544,7 @@ object Container
 
       // figure out what's wrong with adminsOf and then send email to every 
       // admin of the freezer
-      val mail = use[MailerPlugin].email
-      mail.setSubject("Freezer Warning")
-      mail.setRecipient(email)
-      mail.setFrom("cbsrtempmon@gmail.com")
-
-      mail.send(message)
+      Email.sendEmail(email, "Freezer Warning", message)
     }
   }
 
@@ -515,9 +564,11 @@ object Container
     DB.withConnection { implicit connection =>
       val readings = SQL(
         """
-          SELECT fr.read_temperature, 
+          SELECT fr.reading_id,
+                 fr.read_temperature, 
                  fr.read_status,
-                 fr.read_time
+                 fr.read_time,
+                 fr.read_note
           FROM container_readings AS fr
           
           WHERE fr.container_id = {containerID}
@@ -553,7 +604,9 @@ object Container
         """
           select fr.read_temperature,
                  fr.read_status,
-                 fr.read_time
+                 fr.read_time,
+                 fr.reading_id,
+                 fr.read_note
           from container_readings as fr
            
           where fr.container_id = {containerID}
@@ -570,4 +623,87 @@ object Container
       }.getOrElse{ 0 }
     }
   }
+
+  def getContainerReading(container: Container, readID: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select fr.reading_id,
+                 fr.read_temperature,
+                 fr.read_status,
+                 fr.read_time,
+                 fr.read_note
+          from container_readings as fr
+
+          where fr.container_id = {containerID}
+          and fr.reading_id = {readingID}
+        """
+      ).on(
+        'containerID -> container.id,
+        'readingID -> readID
+      ).as(Container.reading.singleOpt)
+    }
+  }
+
+  /*
+   * user1 <-> | container1 <-> last reading
+   *             container2 <-> last reading
+   *                       ...
+   *             containerN <-> last reading
+   * 
+   *       ...
+   * 
+   * userN <-> | container1 <-> last reading
+   *             container2 <-> last reading
+   *                        ...
+   *             containerN <-> last reading   
+   * 
+   * for each user get every container and its last temperature reading
+   * if the last reading time is more than an hour overdue (if there is
+   * a read frequency specified) then notify the admin (if the admin 
+   * has signed up to receive updates)
+   * 
+   * container_list.list_number | container_list.index | container.name | 
+   *   container.read_frequency | container_reading.read_time (most recent)
+   */
+
+  def getLateReadings(): List[ContainerReadOverdueData] = {
+    DB.withConnection { implicit connection =>
+      val containers = SQL (
+        """ 
+        SELECT fl.list_number,
+               fl.container_index,
+               f.name,
+               f.read_frequency,
+               fr.read_time
+        FROM container_list AS fl
+ 
+        JOIN container AS f
+        ON f.id = fl.container_id
+
+        JOIN (
+          SELECT frb.* 
+          FROM container_readings AS frb
+
+          JOIN (
+            SELECT container_id,
+                   max(read_time) as max_time
+            FROM container_readings
+            
+            GROUP BY container_id
+          ) AS fra
+          ON fra.container_id = frb.container_id 
+          AND fra.max_time = frb.read_time
+
+        ) AS fr 
+        ON fr.container_id = fl.container_id
+
+        WHERE (fr.read_time + INTERVAL f.read_frequency SECOND + INTERVAL 60 MINUTE) < NOW();
+        """
+      ).as(Container.readingOverdue *)
+
+      return containers
+    }
+  }
 }
+

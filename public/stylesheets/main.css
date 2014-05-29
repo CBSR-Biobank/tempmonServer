@@ -52,10 +52,9 @@ fieldset,
   zoom:1;
 }
 .clearfix:before, form .clearfix:after{
-  display:table;
   content:"";
   zoom:1;
-  *display:inline;
+  display:inline;
 }
 .clearfix:after{
   clear:both;

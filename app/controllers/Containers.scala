@@ -1,15 +1,21 @@
 package controllers
 
 import play.api._
+
 import play.api.mvc._
+
 import play.api.data._
 import play.api.data.Forms._
+
 import play.api.i18n.{Messages}
-import anorm._
+
 import play.api.libs.json._
+
+import anorm._
 
 import models._
 import views._
+
 import utils.DoubleFormat._
 import utils.CSV._
 
@@ -29,7 +35,6 @@ object ContainerController extends Controller with Secured {
   /**
    * Display the dashboard.
    */
-
   def Home = Redirect(routes.ContainerController.list(0, 1, ""))
 
   def index = IsAuthenticated { username => _ =>
@@ -49,6 +54,12 @@ object ContainerController extends Controller with Secured {
       )(ContainerEditData.apply)(ContainerEditData.unapply)
     )
   }
+
+  val noteForm = Form(
+    mapping(
+      "note" -> text
+    )(ContainerNote.apply)(ContainerNote.unapply)
+  )
 
   def createContainerForm(user: User) = {
     Form(
@@ -167,6 +178,49 @@ object ContainerController extends Controller with Secured {
     }.getOrElse(Forbidden)
   }
 
+  def editNote(index: Long, readID: Long) = IsAuthenticated {
+    username => implicit request =>
+    User.findByEmail(username).map { user =>
+      Container.findUnderAdminByIndex(index, user.email).map { container =>
+        Container.getContainerReading(container, readID).map { reading =>
+          Ok(
+            html.editNoteForm(
+              index,
+              reading.readID,
+              reading.readTemperature,
+              reading.readStatus,
+              reading.readTime.toString,
+              noteForm.fill(Container.toEditNote(reading)), 
+              user
+            )
+          )
+        }.getOrElse(NotFound)
+      }.getOrElse(NotFound)
+    }.getOrElse(Forbidden)
+  }
+
+  def updateNote(index: Long, readID: Long) = IsAuthenticated {
+    username => implicit request =>
+    User.findByEmail(username).map { user =>
+      Container.findUnderAdminByIndex(index, user.email).map { container =>
+        Container.getContainerReading(container, readID).map { reading =>
+          noteForm.bindFromRequest.fold(
+            formWithErrors => {
+              Redirect(routes.ContainerController.details(index, 0, 1))
+            },
+            noteData => {
+              Container.addNote(container.id, readID, noteData.note)
+              recordNote(index, user.email, reading.readTemperature,
+                reading.readStatus, reading.readTime, noteData.note)
+              Redirect(routes.ContainerController.details(index, 0, 1))
+            }
+          )
+        }.getOrElse(NotFound)
+      }.getOrElse(NotFound)
+    }.getOrElse(Forbidden)
+  }
+
+
   /**
    * Display the 'new container form'.
    */
@@ -202,13 +256,12 @@ object ContainerController extends Controller with Secured {
     }.getOrElse(Forbidden)
   }
 
-
-  def clientPackage(id: Long) = Action { request =>
+  def clientPackage(index: Long) = Action { request =>
     request.body.asJson.map { credentials =>
       (credentials \ "email").asOpt[String].map { email =>
         (credentials \ "password").asOpt[String].map { password =>
           if (User.valid(email, password)) {
-            Container.toJson(id, email).map { jsObj =>
+            Container.toJson(index, email).map { jsObj =>
               Ok(Json.stringify(jsObj))
             }
           }.getOrElse { NotFound }
@@ -219,8 +272,7 @@ object ContainerController extends Controller with Secured {
     }.getOrElse { BadRequest("Expecting JSON authentication credentials") }
   }
 
-
-  def handleUpload(id: Long) = Action { request =>
+  def handleUpload(index: Long) = Action { request =>
     request.body.asJson.map { json =>
       val email = (json \ "email").asOpt[String].getOrElse{""}
       val password = (json \ "password").asOpt[String].getOrElse{""}
@@ -229,10 +281,10 @@ object ContainerController extends Controller with Secured {
         (json \ "temperature").asOpt[Double].map { temperature =>
           (json \ "status").asOpt[String].map { status =>
             val time = new Date()
-            Container.addReading(id, email, temperature, status, time)
-            Container.notifyAdmins(id, email, temperature, status, time)
+            Container.addReading(index, email, temperature, status, time)
+            Container.notifyAdmins(index, email, temperature, status, time)
             // record this reading to the container's CSV
-            recordReading(id, email, temperature, status, time)
+            recordReading(index, email, temperature, status, time)
  
             Ok("Update complete\n")
           }.getOrElse { BadRequest("Missing parameter: status\n") }
@@ -240,4 +292,5 @@ object ContainerController extends Controller with Secured {
       }
     }.getOrElse { BadRequest("Expecting JSON data\n") }
   }
+
 }

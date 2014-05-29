@@ -1,6 +1,6 @@
 // @SOURCE:/home/connor/workspace/ScalaTempmon/conf/routes
-// @HASH:ed82c1c799b41eb7296653fc16fcca5477d3b90d
-// @DATE:Sat Feb 22 15:03:06 MST 2014
+// @HASH:98e44e0c6c5e84ff2ccf07de762eb17bd4f60be5
+// @DATE:Thu May 22 15:30:35 MDT 2014
 
 import Routes.{prefix => _prefix, defaultPrefix => _defaultPrefix}
 import play.core._
@@ -13,8 +13,10 @@ import play.api.mvc._
 import Router.queryString
 
 
-// @LINE:37
-// @LINE:34
+// @LINE:41
+// @LINE:38
+// @LINE:35
+// @LINE:32
 // @LINE:31
 // @LINE:28
 // @LINE:27
@@ -30,6 +32,8 @@ import Router.queryString
 // @LINE:6
 package controllers {
 
+// @LINE:35
+// @LINE:32
 // @LINE:31
 // @LINE:28
 // @LINE:27
@@ -43,13 +47,13 @@ package controllers {
 class ReverseContainerController {
     
 
-// @LINE:31
+// @LINE:35
 def delete(id:Long): Call = {
    Call("POST", _prefix + { _defaultPrefix } + "containers/" + implicitly[PathBindable[Long]].unbind("id", id) + "/delete")
 }
                                                 
 
-// @LINE:27
+// @LINE:31
 def clientPackage(id:Long): Call = {
    Call("PUT", _prefix + { _defaultPrefix } + "containers/" + implicitly[PathBindable[Long]].unbind("id", id) + "/specifications/clientpkg.json")
 }
@@ -67,13 +71,19 @@ def edit(index:Long): Call = {
 }
                                                 
 
+// @LINE:27
+def editNote(index:Long, readID:Long): Call = {
+   Call("GET", _prefix + { _defaultPrefix } + "containers/" + implicitly[PathBindable[Long]].unbind("index", index) + "/readings/" + implicitly[PathBindable[Long]].unbind("readID", readID) + "/note")
+}
+                                                
+
 // @LINE:24
 def update(id:Long): Call = {
    Call("POST", _prefix + { _defaultPrefix } + "containers/edit" + queryString(List(Some(implicitly[QueryStringBindable[Long]].unbind("id", id)))))
 }
                                                 
 
-// @LINE:28
+// @LINE:32
 def handleUpload(id:Long): Call = {
    Call("PUT", _prefix + { _defaultPrefix } + "containers/" + implicitly[PathBindable[Long]].unbind("id", id) + "/uploadpkg.json")
 }
@@ -91,6 +101,12 @@ def save(): Call = {
 }
                                                 
 
+// @LINE:28
+def updateNote(index:Long, readID:Long): Call = {
+   Call("POST", _prefix + { _defaultPrefix } + "containers/" + implicitly[PathBindable[Long]].unbind("index", index) + "/readings/" + implicitly[PathBindable[Long]].unbind("readID", readID) + "/note")
+}
+                                                
+
 // @LINE:6
 def index(): Call = {
    Call("GET", _prefix)
@@ -99,18 +115,18 @@ def index(): Call = {
 
 // @LINE:20
 def details(index:Long, p:Int = 0, s:Int = -3): Call = {
-   Call("GET", _prefix + { _defaultPrefix } + "containers/" + implicitly[PathBindable[Long]].unbind("index", index) + queryString(List(if(p == 0) None else Some(implicitly[QueryStringBindable[Int]].unbind("p", p)), if(s == -3) None else Some(implicitly[QueryStringBindable[Int]].unbind("s", s)))))
+   Call("GET", _prefix + { _defaultPrefix } + "containers/" + implicitly[PathBindable[Long]].unbind("index", index) + "/readings" + queryString(List(if(p == 0) None else Some(implicitly[QueryStringBindable[Int]].unbind("p", p)), if(s == -3) None else Some(implicitly[QueryStringBindable[Int]].unbind("s", s)))))
 }
                                                 
     
 }
                           
 
-// @LINE:34
+// @LINE:38
 class ReverseAssets {
     
 
-// @LINE:34
+// @LINE:38
 def at(file:String): Call = {
    Call("GET", _prefix + { _defaultPrefix } + "assets/" + implicitly[PathBindable[String]].unbind("file", file))
 }
@@ -119,7 +135,7 @@ def at(file:String): Call = {
 }
                           
 
-// @LINE:37
+// @LINE:41
 // @LINE:10
 // @LINE:9
 // @LINE:8
@@ -138,7 +154,7 @@ def authenticate(): Call = {
 }
                                                 
 
-// @LINE:37
+// @LINE:41
 def untrail(path:String): Call = {
    Call("GET", _prefix + { _defaultPrefix } + implicitly[PathBindable[String]].unbind("path", path) + "/")
 }
@@ -156,8 +172,10 @@ def login(): Call = {
                   
 
 
-// @LINE:37
-// @LINE:34
+// @LINE:41
+// @LINE:38
+// @LINE:35
+// @LINE:32
 // @LINE:31
 // @LINE:28
 // @LINE:27
@@ -173,6 +191,8 @@ def login(): Call = {
 // @LINE:6
 package controllers.javascript {
 
+// @LINE:35
+// @LINE:32
 // @LINE:31
 // @LINE:28
 // @LINE:27
@@ -186,7 +206,7 @@ package controllers.javascript {
 class ReverseContainerController {
     
 
-// @LINE:31
+// @LINE:35
 def delete : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.ContainerController.delete",
    """
@@ -197,7 +217,7 @@ def delete : JavascriptReverseRoute = JavascriptReverseRoute(
 )
                         
 
-// @LINE:27
+// @LINE:31
 def clientPackage : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.ContainerController.clientPackage",
    """
@@ -230,6 +250,17 @@ def edit : JavascriptReverseRoute = JavascriptReverseRoute(
 )
                         
 
+// @LINE:27
+def editNote : JavascriptReverseRoute = JavascriptReverseRoute(
+   "controllers.ContainerController.editNote",
+   """
+      function(index,readID) {
+      return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "containers/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("index", index) + "/readings/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("readID", readID) + "/note"})
+      }
+   """
+)
+                        
+
 // @LINE:24
 def update : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.ContainerController.update",
@@ -241,7 +272,7 @@ def update : JavascriptReverseRoute = JavascriptReverseRoute(
 )
                         
 
-// @LINE:28
+// @LINE:32
 def handleUpload : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.ContainerController.handleUpload",
    """
@@ -274,6 +305,17 @@ def save : JavascriptReverseRoute = JavascriptReverseRoute(
 )
                         
 
+// @LINE:28
+def updateNote : JavascriptReverseRoute = JavascriptReverseRoute(
+   "controllers.ContainerController.updateNote",
+   """
+      function(index,readID) {
+      return _wA({method:"POST", url:"""" + _prefix + { _defaultPrefix } + """" + "containers/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("index", index) + "/readings/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("readID", readID) + "/note"})
+      }
+   """
+)
+                        
+
 // @LINE:6
 def index : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.ContainerController.index",
@@ -290,7 +332,7 @@ def details : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.ContainerController.details",
    """
       function(index,p,s) {
-      return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "containers/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("index", index) + _qS([(p == null ? null : (""" + implicitly[QueryStringBindable[Int]].javascriptUnbind + """)("p", p)), (s == null ? null : (""" + implicitly[QueryStringBindable[Int]].javascriptUnbind + """)("s", s))])})
+      return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "containers/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("index", index) + "/readings" + _qS([(p == null ? null : (""" + implicitly[QueryStringBindable[Int]].javascriptUnbind + """)("p", p)), (s == null ? null : (""" + implicitly[QueryStringBindable[Int]].javascriptUnbind + """)("s", s))])})
       }
    """
 )
@@ -299,11 +341,11 @@ def details : JavascriptReverseRoute = JavascriptReverseRoute(
 }
               
 
-// @LINE:34
+// @LINE:38
 class ReverseAssets {
     
 
-// @LINE:34
+// @LINE:38
 def at : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.Assets.at",
    """
@@ -317,7 +359,7 @@ def at : JavascriptReverseRoute = JavascriptReverseRoute(
 }
               
 
-// @LINE:37
+// @LINE:41
 // @LINE:10
 // @LINE:9
 // @LINE:8
@@ -346,7 +388,7 @@ def authenticate : JavascriptReverseRoute = JavascriptReverseRoute(
 )
                         
 
-// @LINE:37
+// @LINE:41
 def untrail : JavascriptReverseRoute = JavascriptReverseRoute(
    "controllers.Application.untrail",
    """
@@ -374,8 +416,10 @@ def login : JavascriptReverseRoute = JavascriptReverseRoute(
         
 
 
-// @LINE:37
-// @LINE:34
+// @LINE:41
+// @LINE:38
+// @LINE:35
+// @LINE:32
 // @LINE:31
 // @LINE:28
 // @LINE:27
@@ -392,6 +436,8 @@ def login : JavascriptReverseRoute = JavascriptReverseRoute(
 package controllers.ref {
 
 
+// @LINE:35
+// @LINE:32
 // @LINE:31
 // @LINE:28
 // @LINE:27
@@ -405,13 +451,13 @@ package controllers.ref {
 class ReverseContainerController {
     
 
-// @LINE:31
+// @LINE:35
 def delete(id:Long): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
    controllers.ContainerController.delete(id), HandlerDef(this, "controllers.ContainerController", "delete", Seq(classOf[Long]), "POST", """ Delete a container""", _prefix + """containers/$id<[^/]+>/delete""")
 )
                       
 
-// @LINE:27
+// @LINE:31
 def clientPackage(id:Long): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
    controllers.ContainerController.clientPackage(id), HandlerDef(this, "controllers.ContainerController", "clientPackage", Seq(classOf[Long]), "PUT", """ Get the JSON representation of the monitor requirements for this container""", _prefix + """containers/$id<[^/]+>/specifications/clientpkg.json""")
 )
@@ -429,13 +475,19 @@ def edit(index:Long): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
 )
                       
 
+// @LINE:27
+def editNote(index:Long, readID:Long): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
+   controllers.ContainerController.editNote(index, readID), HandlerDef(this, "controllers.ContainerController", "editNote", Seq(classOf[Long], classOf[Long]), "GET", """ Add note to reading""", _prefix + """containers/$index<[^/]+>/readings/$readID<[^/]+>/note""")
+)
+                      
+
 // @LINE:24
 def update(id:Long): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
    controllers.ContainerController.update(id), HandlerDef(this, "controllers.ContainerController", "update", Seq(classOf[Long]), "POST", """""", _prefix + """containers/edit""")
 )
                       
 
-// @LINE:28
+// @LINE:32
 def handleUpload(id:Long): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
    controllers.ContainerController.handleUpload(id), HandlerDef(this, "controllers.ContainerController", "handleUpload", Seq(classOf[Long]), "PUT", """""", _prefix + """containers/$id<[^/]+>/uploadpkg.json""")
 )
@@ -453,6 +505,12 @@ def save(): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
 )
                       
 
+// @LINE:28
+def updateNote(index:Long, readID:Long): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
+   controllers.ContainerController.updateNote(index, readID), HandlerDef(this, "controllers.ContainerController", "updateNote", Seq(classOf[Long], classOf[Long]), "POST", """""", _prefix + """containers/$index<[^/]+>/readings/$readID<[^/]+>/note""")
+)
+                      
+
 // @LINE:6
 def index(): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
    controllers.ContainerController.index(), HandlerDef(this, "controllers.ContainerController", "index", Seq(), "GET", """ Home page""", _prefix + """""")
@@ -461,18 +519,18 @@ def index(): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
 
 // @LINE:20
 def details(index:Long, p:Int, s:Int): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
-   controllers.ContainerController.details(index, p, s), HandlerDef(this, "controllers.ContainerController", "details", Seq(classOf[Long], classOf[Int], classOf[Int]), "GET", """ View container""", _prefix + """containers/$index<[^/]+>""")
+   controllers.ContainerController.details(index, p, s), HandlerDef(this, "controllers.ContainerController", "details", Seq(classOf[Long], classOf[Int], classOf[Int]), "GET", """ View container""", _prefix + """containers/$index<[^/]+>/readings""")
 )
                       
     
 }
                           
 
-// @LINE:34
+// @LINE:38
 class ReverseAssets {
     
 
-// @LINE:34
+// @LINE:38
 def at(path:String, file:String): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
    controllers.Assets.at(path, file), HandlerDef(this, "controllers.Assets", "at", Seq(classOf[String], classOf[String]), "GET", """ Map static resources from the /public folder to the /assets URL path""", _prefix + """assets/$file<.+>""")
 )
@@ -481,7 +539,7 @@ def at(path:String, file:String): play.api.mvc.HandlerRef[_] = new play.api.mvc.
 }
                           
 
-// @LINE:37
+// @LINE:41
 // @LINE:10
 // @LINE:9
 // @LINE:8
@@ -500,7 +558,7 @@ def authenticate(): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
 )
                       
 
-// @LINE:37
+// @LINE:41
 def untrail(path:String): play.api.mvc.HandlerRef[_] = new play.api.mvc.HandlerRef(
    controllers.Application.untrail(path), HandlerDef(this, "controllers.Application", "untrail", Seq(classOf[String]), "GET", """ Remove trailing / from GETs""", _prefix + """$path<.+>/""")
 )
