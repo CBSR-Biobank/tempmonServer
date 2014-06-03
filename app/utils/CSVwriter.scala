@@ -12,7 +12,10 @@ import java.io._
 import java.util.regex._
 import java.text.SimpleDateFormat
 
+import play.api.Play.current
+
 object CSV {
+  val projectRoot: String = current.path.toString()
   /*
    * Escape line breaks, double quotes and commas in the given string with
    * double quotes
@@ -56,7 +59,7 @@ object CSV {
       val month = (c.get(Calendar.MONTH) + 1).toString
       val day = c.get(Calendar.DAY_OF_MONTH).toString
 
-      var path: String = "/home/connor/workspace/ScalaTempmon/logs/container-lists/"+listNum.toString+"/containers/"+id.toString+"/"+year+"/"+month+"/"
+      var path: String = projectRoot+"/logs/container-lists/"+listNum.toString+"/containers/"+id.toString+"/"+year+"/"+month+"/"
 
       Files.createDirectories(Paths.get(path))
       path = path+day+"-"+month+"-"+year+".csv"
@@ -85,11 +88,11 @@ object CSV {
       val month = (c.get(Calendar.MONTH) + 1).toString
       val day = c.get(Calendar.DAY_OF_MONTH).toString
 
-      var path: String = "/home/connor/workspace/ScalaTempmon/logs/container-lists/"+listNum.toString+"/containers/"+index.toString+"/"+year+"/"+month+"/"
+      var path: String = projectRoot+"/logs/container-lists/"+listNum.toString+"/containers/"+index.toString+"/"+year+"/"+month+"/"
 
       val fullPath = path+day+"-"+month+"-"+year+".csv"
 
-      val df = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy")
+      val df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
       val readTime = df.format(c.getTime())
 
       val escapedNote = escapeCharacters(note)
@@ -100,10 +103,9 @@ object CSV {
         file.close()
 
         val replace = temperature.toString+","+status+","+readTime
-        val replacement = temperature.toString+","+status+","+readTime+","+escapedNote
 
         val linesOut = linesIn.map {
-          case line if line.startsWith(replace) => replacement;
+          case line if line.startsWith(replace) => line + "," + escapedNote
           case x => x
         }
 
@@ -112,7 +114,7 @@ object CSV {
         out.close()
       }
       catch {
-        case e: IOException => println("adsflkdfas")
+        case e: IOException => play.api.Logger.error("Failed writing to CSV: File Not Found")
       }
     }
   }

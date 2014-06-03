@@ -25,15 +25,16 @@
 	<img src="@routes.Assets.at("images/logo1.png")" align="left">
 	Temperature Monitor
       </a>
-
+      
+      @if(user.email!="") {
       <dl id="user">
-	<dt>@user.name (@user.email)</dt>
 	<dd>
-	  <a href="@routes.Application.logout()">Logout</a>
+	  <a href="@routes.UserController.editAdmins()">Edit admins</a>
 	</dd>
       </dl>
-    </header>
+      }
 
+    </header>
     <section>
       @content
     </section> 

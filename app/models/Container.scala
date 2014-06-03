@@ -516,8 +516,11 @@ object Container
     DB.withConnection { implicit connection =>
       SQL(
         """
-          UPDATE container_readings
-            SET read_note = {note},
+          UPDATE container_readings as c
+            SET read_note = IF(
+                               read_note is NULL, 
+                               {note}, 
+                               CONCAT(c.read_note, "; ", {note})),
                 read_time = read_time
 
             WHERE container_id = {id}

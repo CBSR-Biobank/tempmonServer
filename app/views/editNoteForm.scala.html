@@ -1,4 +1,4 @@
-@(index: Long, readID: Long, temperature: Double, status: String, time: String, noteForm: Form[ContainerNote], user: User)
+@(index: Long, readID: Long, temperature: Double, status: String, time: String, note: Option[String], noteForm: Form[ContainerNote], user: User)
 
 @import java.util.{Date}
 @import helper._
@@ -36,18 +36,27 @@
 	</td>
       </tr>
     </tbody>
-  </table>
-  @helper.form(action = routes.ContainerController.updateNote(index, readID)) {
+  </table> 
+  <h1>Edit Note</h1>
+  <fieldset>
+  @helper.form(action = routes.ContainerController.updateNote(index, readID)){
+    @if(note.isDefined) {
+      <div style="margin-left:8.175%; width: 700px; color: hsl(0, 0%, 25%)">
+	Note:&#160;&#160;&#160;
+	@note
+      </div>
+    }
     @helper.inputText(
       noteForm("note"), 
-      'style -> "width: 700px; margin-left:12.5%;", 
-      'placeholder -> "Add note here",
-      '_label -> null
-     )
-  <div style="margin-left:68%">
-    <a onclick="goBack()" class="btn">Cancel</a>
-    <input type="submit" value="Save" class="btn primary">
-  </div>
-   }
+      'style -> "width: 700px;", 
+      '_showConstraints -> false,
+      '_label -> "Add note"
+    )
+    <div style="display:inline; margin-left:58.2%;">
+      <input type="submit" value="Save" class="btn primary">
+      <a onclick="goBack()" class="btn">Cancel</a>
+    </div>
+  }
+  </fieldset>
 </sectionBody>
 }

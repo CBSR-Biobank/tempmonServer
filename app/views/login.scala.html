@@ -1,11 +1,10 @@
 @(form: Form[(String,String)])(implicit flash: Flash)
-
+@main(new User("", "", "")) {
 <html>
   <head>
     <title>CBSR Tempmon</title>
   </head>
   <body>  
-    
     @helper.form(routes.Application.authenticate) {
     <h1>Sign in</h1>
     
@@ -28,9 +27,10 @@
       <input type="password" name="password" id="password" placeholder="Password">
     </p>
     <p>
-      <button type="submit" id="loginbutton">Login</button>
-    </p>
+      <button type="submit" id="loginbutton" class="btn primary">Login</button>
+   </p>
     }
     
   </body>
 </html>
+}

@@ -6,9 +6,15 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
+import java.util.{Date}
+
 case class User(email: String, name: String, password: String)
 
 case class UserEmail(email: String)
+
+case class UserCreateData(email: String, nameFirst: String, nameLast: String, password: String, birthday: String, gender: String, country: String)
+
+case class AdminAddData(email: String)
 
 object User {
   // -- Parsers
@@ -18,9 +24,10 @@ object User {
    */
   val simple = {
     get[String]("user.email") ~
-    get[String]("user.name") ~
+    get[String]("user.name_first") ~
+    get[String]("user.name_last") ~
     get[String]("user.password") map {
-      case email~name~password => User(email, name, password)
+      case email~name_first~name_last~password => User(email, name_first+" "+name_last, password)
     }
   }
   
@@ -43,6 +50,22 @@ object User {
     }
   }
   
+  def findByEmailWithListNum(email: String, listNum: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT * FROM user 
+
+          WHERE email = {email} 
+          AND container_list_number = {listNum}
+        """
+      ).on(
+        'email -> email,
+        'listNum -> listNum
+      ).as(User.simple.singleOpt)
+    }
+  }
+
   /**
    * Retrieve all users.
    */
@@ -94,18 +117,36 @@ object User {
   /**
    * Create a User.
    */
-  def create(user: User): User = {
+  def create(user: UserCreateData) = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          insert into user values (
-            {email}, {name}, {password}
+          insert into user (
+            email,
+            name_first,
+            name_last,
+            password,
+            birthday,
+            gender,
+            country
+          ) values (
+            {email}, 
+            {name_first}, 
+            {name_last},
+            {password},
+            {birthday},
+            {gender},
+            {country}
           )
         """
       ).on(
         'email -> user.email,
-        'name -> user.name,
-        'password -> user.password
+        'name_first -> user.nameFirst,
+        'name_last -> user.nameLast,
+        'password -> user.password,
+        'birthday -> user.birthday,
+        'gender -> user.gender,
+        'country -> user.country
       ).executeUpdate()
       
       user
@@ -135,12 +176,58 @@ object User {
           from user as u
 
           where u.container_list_number = {list_num}
+          AND u.email != "admin@cbsrtempmon.ca"
         """
       ).on(
         'list_num -> listNum
       ).as(User.emailOnly *)
 
       return users
+    }
+  }
+
+  def addAdmin(admin: String, listNum: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL (
+        """
+          insert into user (
+            email,
+            name_first,
+            name_last,
+            password,
+            birthday,
+            gender,
+            country,
+            container_list_number
+          ) values (
+            {email}, 
+            "Fake",
+            "Name",
+            "afjkdksafj319j039jdojxncpijqwdjjccxasd",
+            "1-2-3",
+            "O",
+            "CA",
+            {listNum}
+          );
+          """
+      ).on(
+        'email -> admin,
+        'listNum -> listNum
+      ).executeUpdate()
+    }
+  }
+
+  def delete(admin: String) = {
+    DB.withConnection { implicit connection =>
+      SQL (
+        """
+          delete from user
+
+          where email = {userEmail}
+        """
+      ).on(
+        'userEmail -> admin
+      ).executeUpdate()
     }
   }
 }

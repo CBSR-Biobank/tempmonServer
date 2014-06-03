@@ -18,14 +18,9 @@ import views._
 
 import utils.DoubleFormat._
 import utils.CSV._
+import utils.Email._
 
 import java.util.{Date}
-
-case class ContainerForForm(id: Pk[Long] = NotAssigned, name: String,
-  index: Long, temperatureExpected: Option[Double],
-  temperatureRange: Option[Double], monitorID: Option[Long],
-  lastReadTemperature: Option[Double], lastReadStatus: Option[String],
-  lastReadTime: Option[Double])
 
 /**
  * Manage container related operations.
@@ -57,7 +52,7 @@ object ContainerController extends Controller with Secured {
 
   val noteForm = Form(
     mapping(
-      "note" -> text
+      "note" -> nonEmptyText
     )(ContainerNote.apply)(ContainerNote.unapply)
   )
 
@@ -190,7 +185,8 @@ object ContainerController extends Controller with Secured {
               reading.readTemperature,
               reading.readStatus,
               reading.readTime.toString,
-              noteForm.fill(Container.toEditNote(reading)), 
+              reading.readNote,
+              noteForm,
               user
             )
           )
@@ -236,8 +232,12 @@ object ContainerController extends Controller with Secured {
   def save = IsAuthenticated { username => implicit request =>
     User.findByEmail(username).map { user =>
       createContainerForm(user).bindFromRequest.fold(
-        formWithErrors => BadRequest(html.createForm(formWithErrors,
-          Monitor.options, user)),
+        formWithErrors => BadRequest(
+          html.createForm(formWithErrors,
+          Monitor.options, 
+            user
+          )
+        ),
         containerCreate => {
           Container.insert(containerCreate, Seq(username))
           Home.flashing("success" -> "Container has been created")
@@ -282,15 +282,24 @@ object ContainerController extends Controller with Secured {
           (json \ "status").asOpt[String].map { status =>
             val time = new Date()
             Container.addReading(index, email, temperature, status, time)
-            Container.notifyAdmins(index, email, temperature, status, time)
-            // record this reading to the container's CSV
+
+            if ((status contains "WARNING") | (status contains "ERROR")) {
+              val container = Container.findUnderAdminByIndex(index, email).get
+              val message: String = container.name +" #" + index.toString + " has reported the following error: \n\n" + status + "\n\n recording a temperature of " + temperature.toString + "C on " + time.toString + "."
+
+              // figure out what's wrong with adminsOf and then send email to 
+              // every admin of the freezer
+              User.getByListNum(User.getListNum(email)).map { user =>
+                sendEmail(user.email, "Freezer Warning", message)
+              }
+            }
+              // record this reading to the container's CSV
             recordReading(index, email, temperature, status, time)
- 
+
             Ok("Update complete\n")
           }.getOrElse { BadRequest("Missing parameter: status\n") }
         }.getOrElse { BadRequest("Missing parameter: temperature\n") }
       }
     }.getOrElse { BadRequest("Expecting JSON data\n") }
   }
-
 }
