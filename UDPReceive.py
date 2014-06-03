@@ -1,4 +1,12 @@
 #!/usr/bin/python
+
+# to install: 
+# : mv /path/to/UDPBroadcast.sh /etc/init.d/
+# : sudo chmod 755 /etc/init.d/UDPBroadcast.sh
+# : mv /path/to/UDPReceive.py /usr/local/lib
+# : sudo chmod 755 /usr/local/lib/UDPReceive.py
+# : sudo update-rc.d UDPBroadcast.sh defaults
+
 import socket
 
 UDP_IP = "255.255.255.255"

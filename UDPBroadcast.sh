@@ -1,4 +1,11 @@
 #!/bin/sh
+
+# to install: 
+# : mv /path/to/UDPBroadcast.sh /etc/init.d/
+# : sudo chmod 755 /etc/init.d/UDPBroadcast.sh
+# : mv /path/to/UDPReceive.py /usr/local/lib
+# : sudo chmod 755 /usr/local/lib/UDPReceive.py
+# : sudo update-rc.d UDPBroadcast.sh defaults
  
 ### BEGIN INIT INFO
 # Provides:          UDPBroadcast
@@ -12,7 +19,7 @@
  
 # Change the next 3 lines to suit where you install your script and what you want to call it
 DIR=/usr/local/bin
-DAEMON=$DIR/UDPreceive.py
+DAEMON=$DIR/UDPReceive.py
 DAEMON_NAME=UDPBroadcast
  
 # This next line determines what user the script runs as.
