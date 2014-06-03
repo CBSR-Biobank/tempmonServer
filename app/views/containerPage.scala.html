@@ -28,9 +28,9 @@
 
 @main(user = user) {
 <sectionHeader style="height:20px; margin-bottom:18px;">
-  <div class="page-header" style="float:left;">
-    @container.name #@index's temperature readings:
-  </div>
+  <headerLeft>
+    @container.name #@index
+  </headerLeft>
   <headerRight>
     <a class="btn success" id="add" href="@routes.ContainerController.edit(index)" style="margin-bottom:18px">
       Edit container

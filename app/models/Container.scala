@@ -454,10 +454,10 @@ object Container
       val lastRead = Container.getLastReadTime(container)
       val freq: Long = container.readFrequency.getOrElse{900}
 
-      val temp: String = container.temperatureExpected.getOrElse{""}.toString
-      val tempRange: String = container.temperatureRange.getOrElse{""}.toString
+      val temp: String = container.temperatureExpected.getOrElse{"-80.0"}.toString
+      val tempRange: String = container.temperatureRange.getOrElse{"15.0"}.toString
 
-      val monitorID: Long = container.monitorID.getOrElse{-1}
+      val monitorID: Long = container.monitorID.getOrElse{1}
       val monitor: JsObject = Monitor.toJson(monitorID).getOrElse{Json.obj()}
 
       Json.obj(
@@ -518,36 +518,20 @@ object Container
         """
           UPDATE container_readings as c
             SET read_note = IF(
-                               read_note is NULL, 
+                               read_note IS NULL, 
                                {note}, 
-                               CONCAT(c.read_note, "; ", {note})),
+                               CONCAT(c.read_note, "; ", {note})
+                              ),
                 read_time = read_time
 
             WHERE container_id = {id}
-            AND reading_id = {read_id}
+            AND reading_id = {read_id};
         """
       ).on(
         'note -> containerNote,
         'id -> containerID,
         'read_id -> readID
       ).executeUpdate()
-    }
-  }
-
-  def notifyAdmins(
-    index: Long, 
-    email: String, 
-    temperature: Double, 
-    status: String,
-    time: Date
-  ) = {
-    if ((status contains "WARNING") | (status contains "ERROR")) {
-      val container = findUnderAdminByIndex(index, email).get
-      val message: String = container.name +" #" + index.toString + " has reported the following error: \n\n" + status + "\n\n recording a temperature of " + temperature.toString + "C on " + time.toString + "."
-
-      // figure out what's wrong with adminsOf and then send email to every 
-      // admin of the freezer
-      Email.sendEmail(email, "Freezer Warning", message)
     }
   }
 

@@ -1,7 +1,13 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
+# User stuff
+POST   /user/create		controllers.UserController.create
 
+GET    /admin/edit		controllers.UserController.editAdmins
+POST   /admin/add		controllers.UserController.submitAdmin
+
+POST   /admin/:email/delete	controllers.UserController.deleteAdmin(email)
 # Home page
 GET    /			controllers.ContainerController.index
 
@@ -24,8 +30,8 @@ GET 	/containers/:index/specifications/edit controllers.ContainerController.edit
 POST    /containers/edit	controllers.ContainerController.update(id:Long)
 
 # Add note to reading
-GET     /containers/:index/readings/:readID/note	controllers.ContainerController.editNote(index:Long, readID:Long)
-POST	/containers/:index/readings/:readID/note	controllers.ContainerController.updateNote(index: Long, readID: Long)
+GET     /containers/:index/readings/:readID/note/edit	controllers.ContainerController.editNote(index:Long, readID:Long)
+POST	/containers/:index/readings/:readID/note/edit	controllers.ContainerController.updateNote(index: Long, readID: Long)
 
 # Get the JSON representation of the monitor requirements for this container
 PUT    /containers/:id/specifications/clientpkg.json	  controllers.ContainerController.clientPackage(id:Long)

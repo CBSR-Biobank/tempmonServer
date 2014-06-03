@@ -12,6 +12,9 @@
 }
 
 @main(user = user) {
+<sectionHeader>
+  <headerLeft> Edit admins </headerLeft>
+</sectionHeader>
 <sectionBody>
   @if(adminForm.hasErrors) {
     @adminForm.errors.map { error =>
