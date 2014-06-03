@@ -12,6 +12,11 @@
 }
 
 @main(user = user) {
+<sectionHeader>
+  <headerLeft>
+    Edit Note
+  </headerLeft>
+</sectionHeader>
 <sectionBody>
   <table class="containers zebra-striped">
     <thead>
@@ -37,13 +42,12 @@
       </tr>
     </tbody>
   </table> 
-  <h1>Edit Note</h1>
   <fieldset>
   @helper.form(action = routes.ContainerController.updateNote(index, readID)){
     @if(note.isDefined) {
-      <div style="margin-left:8.175%; width: 700px; color: hsl(0, 0%, 25%)">
-	Note:&#160;&#160;&#160;
-	@note
+      <div class="clearfix">
+	<label>Note:</label>
+	<div class="input" style="width:700px;">@note</div>
       </div>
     }
     @helper.inputText(
