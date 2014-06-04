@@ -5,11 +5,6 @@
 @main(user = user) {
 <sectionHeader>
   <headerLeft>Edit Container Specifications</headerLeft> 
-  <headerRight>
-    @form(routes.ContainerController.delete(index), 'class -> "topRight") {
-    <input type="submit" value="Delete this container" class="btn danger">
-    } 
-  </headerRight>
 </sectionHeader>
 <sectionBody>
   
@@ -54,6 +49,11 @@
     <a href="@routes.ContainerController.details(index=index)" class="btn">Cancel</a> 
   </div> 
   }
+  <span style="float:right">
+    @form(routes.ContainerController.delete(index), 'class -> "topRight") {
+    <input type="submit" value="Delete this container" class="btn danger">
+    } 
+  </span>
   
 </sectionFooter>
 }
