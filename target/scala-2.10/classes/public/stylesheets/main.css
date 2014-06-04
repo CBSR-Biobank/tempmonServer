@@ -1,6 +1,5 @@
 html,
 body,
-div,
 span,
 applet,
 object,
@@ -46,8 +45,10 @@ dd,
 ol,
 li,
 fieldset,
+div,
 
 .clearfix{
+  display:inherit;
   margin-bottom:18px;
   zoom:1;
 }
@@ -60,6 +61,7 @@ fieldset,
   clear:both;
 }
 .input{
+  display:inherit;
   margin-left:150px;
 }
 fieldset{
@@ -89,6 +91,7 @@ label{
   text-align:right;
   color:#404040;
 }
+
 
 .actions {
   background:#f5f5f5;
@@ -210,11 +213,13 @@ body > section > sectionHeader {
   top:0;
   left:0;
   right:0;
-  height:50px
+  height:35px;
 }
 
 body > section > sectionHeader > headerLeft {
   float:left;
+  font-size:130%;
+  font-weight:bold;
 }
 
 body > section > sectionHeader > headerRight {

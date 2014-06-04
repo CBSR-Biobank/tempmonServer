@@ -7,7 +7,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for scalaserv#scalaserv_2.10;0.1 [compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies scalaserv#scalaserv_2.10;0.1->org.scala-lang#scala-library;2.10.2 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.10.2 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@dc90b5[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@112a19e[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.10.2[0m
 [0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-library;2.10.2[0m
 [0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.10.2 in sbt-chain[0m
@@ -1714,53 +1714,17 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies scalaserv#scalaserv_2.10;0.1->com.github.tototoshi#scala-csv_2.10;1.0.0 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving com.github.tototoshi#scala-csv_2.10;1.0.0 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: com.github.tototoshi#scala-csv_2.10;1.0.0 {compile=[default(compile)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/connor/lib/play-2.2.0/repository/local/com.github.tototoshi/scala-csv_2.10/1.0.0/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for com.github.tototoshi#scala-csv_2.10;1.0.0[0m
-[0m[[0mdebug[0m] [0m		tried file:/home/connor/.m2/repository/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	Maven2 Local: no ivy file found for com.github.tototoshi#scala-csv_2.10;1.0.0[0m
-[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom[0m
-[0m[[0mdebug[0m] [0mCLIENT ERROR: Not Found url=http://oss.sonatype.org/content/repositories/snapshots/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	sonatype-oss-snapshots: no ivy file found for com.github.tototoshi#scala-csv_2.10;1.0.0[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for com.github.tototoshi#scala-csv_2.10;1.0.0[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom (1.0.0)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] com.github.tototoshi#scala-csv_2.10;1.0.0!scala-csv_2.10.pom(pom.original) (2023ms)[0m
-[0m[[0mdebug[0m] [0m		tried /home/connor/lib/play-2.2.0/repository/local/com.github.tototoshi/scala-csv_2.10/1.0.0/jars/scala-csv_2.10.jar[0m
-[0m[[0mdebug[0m] [0m		tried file:/home/connor/.m2/repository/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar[0m
-[0m[[0mdebug[0m] [0mCLIENT ERROR: Not Found url=http://oss.sonatype.org/content/repositories/snapshots/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar[0m
-[0m[[0mdebug[0m] [0m	found com.github.tototoshi#scala-csv_2.10;1.0.0 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: com.github.tototoshi#scala-csv_2.10;1.0.0[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: com.github.tototoshi#scala-csv_2.10;1.0.0[0m
+[0m[[0mdebug[0m] [0m	found com.github.tototoshi#scala-csv_2.10;1.0.0 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies scalaserv#scalaserv_2.10;0.1->com.github.tototoshi#scala-csv_2.10;1.0.0 [compile->runtime][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies scalaserv#scalaserv_2.10;0.1->com.github.tototoshi#scala-csv_2.10;1.0.0 [compile->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.github.tototoshi#scala-csv_2.10;1.0.0->org.scala-lang#scala-library;2.10.3 [compile->master(*)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.10.3 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.scala-lang#scala-library;2.10.3 {compile=[compile(*), master(*)], runtime=[runtime(*)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/connor/lib/play-2.2.0/repository/local/org.scala-lang/scala-library/2.10.3/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for org.scala-lang#scala-library;2.10.3[0m
-[0m[[0mdebug[0m] [0m		tried file:/home/connor/.m2/repository/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom[0m
-[0m[[0mdebug[0m] [0m	Maven2 Local: no ivy file found for org.scala-lang#scala-library;2.10.3[0m
-[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom[0m
-[0m[[0mdebug[0m] [0mCLIENT ERROR: Not Found url=http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom[0m
-[0m[[0mdebug[0m] [0m	sonatype-oss-snapshots: no ivy file found for org.scala-lang#scala-library;2.10.3[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom[0m
-[0m[[0mdebug[0m] [0m	public: found md file for org.scala-lang#scala-library;2.10.3[0m
-[0m[[0mdebug[0m] [0m		=> http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom (2.10.3)[0m
-[0m[[0mdebug[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom[0m
-[0m[[0mdebug[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-library;2.10.3!scala-library.pom(pom.original) (524ms)[0m
-[0m[[0mdebug[0m] [0m		tried /home/connor/lib/play-2.2.0/repository/local/org.scala-lang/scala-library/2.10.3/jars/scala-library.jar[0m
-[0m[[0mdebug[0m] [0m		tried file:/home/connor/.m2/repository/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar[0m
-[0m[[0mdebug[0m] [0mCLIENT ERROR: Not Found url=http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar[0m
-[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.10.3 in public[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.10.3[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-library;2.10.3[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.10.3 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.10.3] org.scala-lang#scala-library;2.10.3[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.github.tototoshi#scala-csv_2.10;1.0.0->org.scala-lang#scala-library;2.10.3 [compile->compile(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.github.tototoshi#scala-csv_2.10;1.0.0->org.scala-lang#scala-library;2.10.3 [compile->default(compile)][0m
@@ -8059,12 +8023,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] mysql#mysql-connector-java;5.1.28!mysql-connector-java.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-slick_2.10;0.5.0.8!play-slick_2.10.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe#play-plugins-mailer_2.10;2.2.0!play-plugins-mailer_2.10.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/com/github/tototoshi/scala-csv_2.10/1.0.0/scala-csv_2.10-1.0.0.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] com.github.tototoshi#scala-csv_2.10;1.0.0!scala-csv_2.10.jar (754ms)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.github.tototoshi#scala-csv_2.10;1.0.0!scala-csv_2.10.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#sbt-link;2.2.0!sbt-link.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-exceptions;2.2.0!play-exceptions.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#templates_2.10;2.2.0!templates_2.10.jar[0m
@@ -8165,12 +8124,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe#play-plugins-util_2.10;2.2.0!play-plugins-util_2.10.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] javax.mail#mail;1.4.1!mail.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] javax.activation#activation;1.1!activation.jar[0m
-[0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar[0m
-[0m[[0minfo[0m] [0mdownloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar ...[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar[0m
-[0m[[0mdebug[0m] [0m	public: downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar.sha1[0m
-[0m[[0mdebug[0m] [0msha1 OK for http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar[0m
-[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-library;2.10.3!scala-library.jar (7611ms)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-library;2.10.3!scala-library.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-test_2.10;2.2.0!play-test_2.10.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-docs_2.10;2.2.0!play-docs_2.10.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-doc_2.10;1.0.3!play-doc_2.10.jar[0m
@@ -8185,7 +8139,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-compiler;2.10.2!scala-compiler.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#jline;2.10.2!jline.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.fusesource.jansi#jansi;1.4!jansi.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 14125ms :: artifacts dl 8504ms[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 9498ms :: artifacts dl 147ms[0m
 [0m[[0mdebug[0m] [0m	report for scalaserv#scalaserv_2.10;0.1 compile produced in /home/connor/workspace/ScalaTempmon/target/resolution-cache/reports/scalaserv-scalaserv_2.10-compile.xml[0m
 [0m[[0mdebug[0m] [0m	report for scalaserv#scalaserv_2.10;0.1 runtime produced in /home/connor/workspace/ScalaTempmon/target/resolution-cache/reports/scalaserv-scalaserv_2.10-runtime.xml[0m
 [0m[[0mdebug[0m] [0m	report for scalaserv#scalaserv_2.10;0.1 test produced in /home/connor/workspace/ScalaTempmon/target/resolution-cache/reports/scalaserv-scalaserv_2.10-test.xml[0m
@@ -8199,5 +8153,5 @@
 [0m[[0mdebug[0m] [0m	report for scalaserv#scalaserv_2.10;0.1 docs produced in /home/connor/workspace/ScalaTempmon/target/resolution-cache/reports/scalaserv-scalaserv_2.10-docs.xml[0m
 [0m[[0mdebug[0m] [0m	report for scalaserv#scalaserv_2.10;0.1 pom produced in /home/connor/workspace/ScalaTempmon/target/resolution-cache/reports/scalaserv-scalaserv_2.10-pom.xml[0m
 [0m[[0mdebug[0m] [0m	report for scalaserv#scalaserv_2.10;0.1 scala-tool produced in /home/connor/workspace/ScalaTempmon/target/resolution-cache/reports/scalaserv-scalaserv_2.10-scala-tool.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (14125ms resolve - 8504ms download)[0m
+[0m[[0mdebug[0m] [0m	resolve done (9498ms resolve - 147ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m

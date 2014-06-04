@@ -20,41 +20,41 @@ object login extends BaseScalaTemplate[play.api.templates.HtmlFormat.Appendable,
         _display_ {
 
 Seq[Any](format.raw/*1.54*/("""
-
+"""),_display_(Seq[Any](/*2.2*/main(new User("", "", ""))/*2.28*/ {_display_(Seq[Any](format.raw/*2.30*/("""
 <html>
   <head>
     <title>CBSR Tempmon</title>
   </head>
   <body>  
-    
-    """),_display_(Seq[Any](/*9.6*/helper/*9.12*/.form(routes.Application.authenticate)/*9.50*/ {_display_(Seq[Any](format.raw/*9.52*/("""
+    """),_display_(Seq[Any](/*8.6*/helper/*8.12*/.form(routes.Application.authenticate)/*8.50*/ {_display_(Seq[Any](format.raw/*8.52*/("""
     <h1>Sign in</h1>
     
-    """),_display_(Seq[Any](/*12.6*/form/*12.10*/.globalError.map/*12.26*/ { error =>_display_(Seq[Any](format.raw/*12.37*/("""
+    """),_display_(Seq[Any](/*11.6*/form/*11.10*/.globalError.map/*11.26*/ { error =>_display_(Seq[Any](format.raw/*11.37*/("""
     <p class="error">
-      """),_display_(Seq[Any](/*14.8*/error/*14.13*/.message)),format.raw/*14.21*/("""
+      """),_display_(Seq[Any](/*13.8*/error/*13.13*/.message)),format.raw/*13.21*/("""
     </p>
-    """)))})),format.raw/*16.6*/("""
+    """)))})),format.raw/*15.6*/("""
     
-    """),_display_(Seq[Any](/*18.6*/flash/*18.11*/.get("success").map/*18.30*/ { message =>_display_(Seq[Any](format.raw/*18.43*/("""
+    """),_display_(Seq[Any](/*17.6*/flash/*17.11*/.get("success").map/*17.30*/ { message =>_display_(Seq[Any](format.raw/*17.43*/("""
     <p class="success">
-      """),_display_(Seq[Any](/*20.8*/message)),format.raw/*20.15*/("""
+      """),_display_(Seq[Any](/*19.8*/message)),format.raw/*19.15*/("""
     </p>
-    """)))})),format.raw/*22.6*/("""
+    """)))})),format.raw/*21.6*/("""
     
     <p>
-      <input type="email" name="email" placeholder="Email" id="email" value=""""),_display_(Seq[Any](/*25.79*/form("email")/*25.92*/.value)),format.raw/*25.98*/("""">
+      <input type="email" name="email" placeholder="Email" id="email" value=""""),_display_(Seq[Any](/*24.79*/form("email")/*24.92*/.value)),format.raw/*24.98*/("""">
     </p>
     <p>
       <input type="password" name="password" id="password" placeholder="Password">
     </p>
     <p>
-      <button type="submit" id="loginbutton">Login</button>
-    </p>
-    """)))})),format.raw/*33.6*/("""
+      <button type="submit" id="loginbutton" class="btn primary">Login</button>
+   </p>
+    """)))})),format.raw/*32.6*/("""
     
   </body>
 </html>
+""")))})),format.raw/*36.2*/("""
 """))}
     }
     
@@ -67,11 +67,11 @@ Seq[Any](format.raw/*1.54*/("""
 }
                 /*
                     -- GENERATED --
-                    DATE: Mon Nov 04 16:43:47 MST 2013
+                    DATE: Wed Jun 04 10:39:21 MDT 2014
                     SOURCE: /home/connor/workspace/ScalaTempmon/app/views/login.scala.html
-                    HASH: 0fab2b1dda6fbac186ba7e25e41b107532450231
-                    MATRIX: 590->1|736->53|851->134|865->140|911->178|950->180|1017->212|1030->216|1055->232|1104->243|1169->273|1183->278|1213->286|1259->301|1305->312|1319->317|1347->336|1398->349|1465->381|1494->388|1540->403|1668->495|1690->508|1718->514|1943->708
-                    LINES: 19->1|22->1|30->9|30->9|30->9|30->9|33->12|33->12|33->12|33->12|35->14|35->14|35->14|37->16|39->18|39->18|39->18|39->18|41->20|41->20|43->22|46->25|46->25|46->25|54->33
+                    HASH: afcb7611e6dd4be0c941b97175c87922cff632fb
+                    MATRIX: 590->1|736->53|772->55|806->81|845->83|954->158|968->164|1014->202|1053->204|1120->236|1133->240|1158->256|1207->267|1272->297|1286->302|1316->310|1362->325|1408->336|1422->341|1450->360|1501->373|1568->405|1597->412|1643->427|1771->519|1793->532|1821->538|2065->751|2121->776
+                    LINES: 19->1|22->1|23->2|23->2|23->2|29->8|29->8|29->8|29->8|32->11|32->11|32->11|32->11|34->13|34->13|34->13|36->15|38->17|38->17|38->17|38->17|40->19|40->19|42->21|45->24|45->24|45->24|53->32|57->36
                     -- GENERATED --
                 */
             

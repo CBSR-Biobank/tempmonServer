@@ -2,8 +2,12 @@
 CREATE TABLE IF NOT EXISTS user (
   id   	     	    	    INT PRIMARY KEY AUTO_INCREMENT,
   email                     VARCHAR(255) NOT NULL,
-  name                      VARCHAR(255) NOT NULL,
+  name_first                VARCHAR(255) NOT NULL,
+  name_last    		    VARCHAR(255) NOT NULL,
   password                  VARCHAR(255) NOT NULL,
+  birthday		    DATE,
+  gender		    VARCHAR(1) NOT NULL,
+  country		    VARCHAR(32) NOT NULL,
   container_list_number	    INT NOT NULL
 );
 
@@ -40,7 +44,7 @@ CREATE TABLE IF NOT EXISTS container_readings (
   read_temperature 	   DOUBLE NOT NULL,
   read_status 		   VARCHAR(255) NOT NULL,
   read_time 		   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  read_note		   VARCHAR(1024),
+  read_note		   VARCHAR(1023),
   FOREIGN KEY(container_id) 
     REFERENCES container(id) 
     ON DELETE CASCADE

@@ -24,41 +24,60 @@ Seq[Any](format.raw/*1.101*/("""
 """),format.raw/*3.75*/("""
 
 """),_display_(Seq[Any](/*5.2*/main(user = user)/*5.19*/ {_display_(Seq[Any](format.raw/*5.21*/("""
+<sectionHeader>
+  <headerLeft>Edit Container Specifications</headerLeft> 
+</sectionHeader>
 <sectionBody>
-  <h1>Edit Container Specifications</h1> 
-  """),_display_(Seq[Any](/*8.4*/form(routes.ContainerController.update(index))/*8.50*/ {_display_(Seq[Any](format.raw/*8.52*/("""
+  
+  
+  """),_display_(Seq[Any](/*12.4*/form(routes.ContainerController.update(index))/*12.50*/ {_display_(Seq[Any](format.raw/*12.52*/("""
   <fieldset> 
-    """),_display_(Seq[Any](/*10.6*/inputText(containerForm("name"), '_label -> "Container name"))),format.raw/*10.67*/("""
-    """),_display_(Seq[Any](/*11.6*/inputText(containerForm("temperatureExpected"), 
-    '_label -> "Operating container temperature"))),format.raw/*12.50*/("""
+    """),_display_(Seq[Any](/*14.6*/inputText(
+      containerForm("name"), 
+      '_label -> "Container name",
+      '_showConstraints -> containerForm.error("name").isDefined
+    ))),format.raw/*18.6*/("""
+    """),_display_(Seq[Any](/*19.6*/inputText(
+      containerForm("temperatureExpected"), 
+      '_label -> "Operating container temperature",
+      '_showConstraints -> false
+    ))),format.raw/*23.6*/("""
     
-    """),_display_(Seq[Any](/*14.6*/inputText(containerForm("temperatureRange"), 
-    '_label -> "Safe temperature range"))),format.raw/*15.41*/("""
+    """),_display_(Seq[Any](/*25.6*/inputText(
+      containerForm("temperatureRange"), 
+      '_label -> "Safe temperature range",
+      '_showConstraints -> false
+    ))),format.raw/*29.6*/("""
     
-    """),_display_(Seq[Any](/*17.6*/inputText(containerForm("readFrequency"),
-    '_label -> "Read frequency (in seconds)"))),format.raw/*18.46*/("""
+    """),_display_(Seq[Any](/*31.6*/inputText(
+      containerForm("readFrequency"),
+      '_label -> "Read frequency (in seconds)",
+      '_showConstraints -> false
+    ))),format.raw/*35.6*/("""
     
-    """),_display_(Seq[Any](/*20.6*/select(
+    """),_display_(Seq[Any](/*37.6*/select(
     containerForm("monitor"), 
     monitors, 
     '_label -> "Monitor", '_default -> "-- Choose a monitor --",
     '_showConstraints -> false
-    ))),format.raw/*25.6*/("""
+    ))),format.raw/*42.6*/("""
     
   </fieldset>
 </sectionBody>
 <sectionFooter>  
   <div class="actions">
     <input type="submit" value="Save this container" class="btn primary"> or 
-    <a href=""""),_display_(Seq[Any](/*32.15*/routes/*32.21*/.ContainerController.details(index=index))),format.raw/*32.62*/("""" class="btn">Cancel</a> 
+    <a href=""""),_display_(Seq[Any](/*49.15*/routes/*49.21*/.ContainerController.details(index=index))),format.raw/*49.62*/("""" class="btn">Cancel</a> 
   </div> 
-  """)))})),format.raw/*34.4*/("""
+  """)))})),format.raw/*51.4*/("""
+  <span style="float:right">
+    """),_display_(Seq[Any](/*53.6*/form(routes.ContainerController.delete(index), 'class -> "topRight")/*53.74*/ {_display_(Seq[Any](format.raw/*53.76*/("""
+    <input type="submit" value="Delete this container" class="btn danger">
+    """)))})),format.raw/*55.6*/(""" 
+  </span>
   
-  """),_display_(Seq[Any](/*36.4*/form(routes.ContainerController.delete(index), 'class -> "topRight")/*36.72*/ {_display_(Seq[Any](format.raw/*36.74*/("""
-  <input type="submit" value="Delete this container" class="btn danger">
-  """)))})),format.raw/*38.4*/(""" 
 </sectionFooter>
-""")))})),format.raw/*40.2*/("""
+""")))})),format.raw/*59.2*/("""
   
 """))}
     }
@@ -72,11 +91,11 @@ Seq[Any](format.raw/*1.101*/("""
 }
                 /*
                     -- GENERATED --
-                    DATE: Fri May 23 10:22:41 MDT 2014
+                    DATE: Wed Jun 04 10:51:53 MDT 2014
                     SOURCE: /home/connor/workspace/ScalaTempmon/app/views/editForm.scala.html
-                    HASH: 02b146e882e0eb0d446c5006140a81991d2d272e
-                    MATRIX: 620->1|821->119|853->143|933->100|961->192|998->195|1023->212|1062->214|1156->274|1210->320|1249->322|1304->342|1387->403|1428->409|1548->507|1594->518|1702->604|1748->615|1857->702|1903->713|2079->868|2284->1037|2299->1043|2362->1084|2432->1123|2474->1130|2551->1198|2591->1200|2699->1277|2750->1297
-                    LINES: 19->1|22->3|22->3|23->1|24->3|26->5|26->5|26->5|29->8|29->8|29->8|31->10|31->10|32->11|33->12|35->14|36->15|38->17|39->18|41->20|46->25|53->32|53->32|53->32|55->34|57->36|57->36|57->36|59->38|61->40
+                    HASH: 703985d1edbe38e895c5676fff1b17c83a4a1b72
+                    MATRIX: 620->1|821->119|853->143|933->100|961->192|998->195|1023->212|1062->214|1212->329|1267->375|1307->377|1362->397|1529->543|1570->549|1737->695|1783->706|1938->840|1984->851|2140->986|2186->997|2362->1152|2567->1321|2582->1327|2645->1368|2715->1407|2785->1442|2862->1510|2902->1512|3014->1593|3078->1626
+                    LINES: 19->1|22->3|22->3|23->1|24->3|26->5|26->5|26->5|33->12|33->12|33->12|35->14|39->18|40->19|44->23|46->25|50->29|52->31|56->35|58->37|63->42|70->49|70->49|70->49|72->51|74->53|74->53|74->53|76->55|80->59
                     -- GENERATED --
                 */
             
