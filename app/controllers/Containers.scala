@@ -22,22 +22,26 @@ import utils.Email._
 
 import java.util.{Date}
 
-/**
+/*
  * Manage container related operations.
  */
 object ContainerController extends Controller with Secured {
 
-  /**
+  /*
    * Display the dashboard.
    */
   def Home = Redirect(routes.ContainerController.list(0, 1, ""))
 
   def index = IsAuthenticated { username => _ =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       Home
     }.getOrElse(Forbidden)
   }
 
+  /*
+   * Form for modifying a container; index is absent since various constructs
+   * rely on a container maintaining the same index (i.e. CSV writing)
+   */
   val editContainerForm = {
     Form(
       mapping(
@@ -50,19 +54,31 @@ object ContainerController extends Controller with Secured {
     )
   }
 
+  /*
+   * Made a form for notes instead of just using a single since in the future
+   * the note section may become more robust, wanted to be able to add to it 
+   * easily.
+   */
   val noteForm = Form(
     mapping(
       "note" -> nonEmptyText
     )(ContainerNote.apply)(ContainerNote.unapply)
   )
 
+  /*
+   * Form for creating a new container. In reality clients won't function 
+   * without a temperatureExpected/Range, read frequency or monitor but I left
+   * them as optional for reasons I can't really recall.
+   * 
+   * @param user User making request (so no duplicate indices may be submitted)
+   */
   def createContainerForm(user: User) = {
     Form(
       mapping(
         "name" -> nonEmptyText,
         "index" -> longNumber.verifying(
           Messages("Container number must be unique"),
-          index => !Container.findUnderAdminByIndex(index, user.email).isDefined
+          index => !Container.getOwnedByAdminByIndex(index, user.email).isDefined
         ),
         "temperatureExpected" -> optional(double),
         "temperatureRange" -> optional(double),
@@ -73,7 +89,7 @@ object ContainerController extends Controller with Secured {
   }
 
   // -- Actions
-  /**
+  /*
    * Display the paginated list of containers.
    *
    * @param page Current page number (starts from 0)
@@ -82,10 +98,10 @@ object ContainerController extends Controller with Secured {
    */
   def list(page: Int, orderBy: Int, filter: String) = IsAuthenticated { 
     username => implicit request =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       Ok(
         html.list(
-          Container.findUnderAdmin(
+          Container.getOwnedByAdmin(
             email=username,
             page = page,
             filter=("%"+filter+"%"),
@@ -99,41 +115,50 @@ object ContainerController extends Controller with Secured {
     }.getOrElse(Redirect(routes.Application.login))
   }
 
-  /**
-    * Display container's data.
-    *
-    * @param id ID of the container to view
-    */
-  def details(index: Long, page: Int, orderBy: Int) = IsAuthenticated { 
+  /*
+   * Display container's data.
+   *
+   * @param index Index of the container to view
+   * @param page Page number of the container's readings
+   * @param orderBy Unused
+   */
+  def details(
+    index: Long,
+    page: Int, 
+    filterErrors: Int,
+    orderBy: Int
+  ) = IsAuthenticated {
     username => _ =>
-    User.findByEmail(username).map { user =>
-      Container.findUnderAdminByIndex(index, user.email).map { container =>
+    User.getByEmail(username).map { user =>
+      Container.getOwnedByAdminByIndex(index, user.email).map { container =>
         Ok(
           html.containerPage(
             Container.getReadings(
               index=index,
               user=user.email,
               page=page,
-              orderBy=orderBy
+              orderBy=orderBy,
+              filterErrors=filterErrors
             ),
             orderBy,
             container,
             user,
-            index
+            index,
+            filterErrors
           )
         )
       }.getOrElse(NotFound)
     }.getOrElse(Forbidden)
   }
 
-  /**
+  /*
    * Display the 'edit form' of a existing Container.
    *
-   * @param id ID of the container to edit
+   * @param index Index of the container to edit
    */
   def edit(index: Long) = IsAuthenticated { username => _ =>
-    User.findByEmail(username).map { user =>
-      Container.findUnderAdminByIndex(index, user.email).map { container =>
+    User.getByEmail(username).map { user =>
+      Container.getOwnedByAdminByIndex(index, user.email).map { container =>
         Ok(
           html.editForm(
             index, 
@@ -146,15 +171,14 @@ object ContainerController extends Controller with Secured {
     }.getOrElse(Forbidden)
   }
   
-  /**
+  /*
    * Handle the 'edit form' submission 
    *
-   * @param id ID of the container to edit
+   * @param index Index of the container to edit
    */
-
   def update(index: Long) = IsAuthenticated { 
     username => implicit request =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       editContainerForm.bindFromRequest.fold(
         formWithErrors =>
           BadRequest(
@@ -173,10 +197,16 @@ object ContainerController extends Controller with Secured {
     }.getOrElse(Forbidden)
   }
 
+  /*
+   * Display the edit note form for a reading
+   * 
+   * @param index Index of the container with reading to edit
+   * @param readID ID of the reading to edit
+   */
   def editNote(index: Long, readID: Long) = IsAuthenticated {
     username => implicit request =>
-    User.findByEmail(username).map { user =>
-      Container.findUnderAdminByIndex(index, user.email).map { container =>
+    User.getByEmail(username).map { user =>
+      Container.getOwnedByAdminByIndex(index, user.email).map { container =>
         Container.getContainerReading(container, readID).map { reading =>
           Ok(
             html.editNoteForm(
@@ -195,10 +225,16 @@ object ContainerController extends Controller with Secured {
     }.getOrElse(Forbidden)
   }
 
+  /*
+   * Handle the update note form submission
+   * 
+   * @param index Index of the container with the reading to edit
+   * @param readID ID of the reading to edit
+   */
   def updateNote(index: Long, readID: Long) = IsAuthenticated {
     username => implicit request =>
-    User.findByEmail(username).map { user =>
-      Container.findUnderAdminByIndex(index, user.email).map { container =>
+    User.getByEmail(username).map { user =>
+      Container.getOwnedByAdminByIndex(index, user.email).map { container =>
         Container.getContainerReading(container, readID).map { reading =>
           noteForm.bindFromRequest.fold(
             formWithErrors => {
@@ -208,7 +244,7 @@ object ContainerController extends Controller with Secured {
               Container.addNote(container.id, readID, noteData.note)
               recordNote(index, user.email, reading.readTemperature,
                 reading.readStatus, reading.readTime, noteData.note)
-              Redirect(routes.ContainerController.details(index, 0, 1))
+              Redirect(routes.ContainerController.details(index, 0, 0))
             }
           )
         }.getOrElse(NotFound)
@@ -217,20 +253,20 @@ object ContainerController extends Controller with Secured {
   }
 
 
-  /**
+  /*
    * Display the 'new container form'.
    */
   def create = IsAuthenticated { username => _ =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       Ok(html.createForm(createContainerForm(user), Monitor.options, user))
     }.getOrElse(Forbidden)
   }
 
-  /**
+  /*
    * Handle the 'new container form' submission.
    */
   def save = IsAuthenticated { username => implicit request =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       createContainerForm(user).bindFromRequest.fold(
         formWithErrors => BadRequest(
           html.createForm(formWithErrors,
@@ -246,60 +282,64 @@ object ContainerController extends Controller with Secured {
     }.getOrElse(Forbidden)
   }
   
-  /**
+  /*
    * Handle container deletion.
+   * 
+   * @param index Index of the container to delete
    */
   def delete(index: Long) = IsAuthenticated { username => _ =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       Container.delete(index, user.email)
       Home.flashing("success" -> "Container has been deleted")
     }.getOrElse(Forbidden)
   }
 
-  def clientPackage(index: Long) = Action { request =>
-    request.body.asJson.map { credentials =>
-      (credentials \ "email").asOpt[String].map { email =>
-        (credentials \ "password").asOpt[String].map { password =>
-          if (User.valid(email, password)) {
-            Container.toJson(index, email).map { jsObj =>
-              Ok(Json.stringify(jsObj))
-            }
-          }.getOrElse { NotFound }
-          else Forbidden
-
-        }.getOrElse { BadRequest("Missing parameter: password") }
-      }.getOrElse { BadRequest("Missing parameter: email") }
-    }.getOrElse { BadRequest("Expecting JSON authentication credentials") }
+  /*
+   * Serve client with JSON object containing runtime specifications
+   * 
+   * @param index Index of the container to turn to JSON
+   */
+  def JSONify(index: Long) = IsAuthenticated { username => _ =>
+    Container.toJson(index, username).map { jsObj =>
+      Ok(Json.stringify(jsObj))
+    }.getOrElse(NotFound)
   }
 
-  def handleUpload(index: Long) = Action { request =>
+  /*
+   * Handle a JSON reading upload from a client process
+   * 
+   * @param index Index of container the reading is for
+   */
+  def addReading(index: Long) = IsAuthenticated { username => request =>
     request.body.asJson.map { json =>
-      val email = (json \ "email").asOpt[String].getOrElse{""}
-      val password = (json \ "password").asOpt[String].getOrElse{""}
-      if (!User.valid(email, password)) Forbidden
-      else {
+      val time = new Date()
         (json \ "temperature").asOpt[Double].map { temperature =>
-          (json \ "status").asOpt[String].map { status =>
-            val time = new Date()
-            Container.addReading(index, email, temperature, status, time)
+          val status = Container.getStatus(index, username, temperature)
+          if (status contains "WARNING") {
+            Container.alarm(index, username, temperature, status, time)
+          }
+          Container.addReading(index, username, temperature, status, time)
 
-            if ((status contains "WARNING") | (status contains "ERROR")) {
-              val container = Container.findUnderAdminByIndex(index, email).get
-              val message: String = container.name +" #" + index.toString + " has reported the following error: \n\n" + status + "\n\n recording a temperature of " + temperature.toString + "C on " + time.toString + "."
+          // record this reading to the container's CSV
+          recordReading(index, username, temperature, status, time)
 
-              // figure out what's wrong with adminsOf and then send email to 
-              // every admin of the freezer
-              User.getByListNum(User.getListNum(email)).map { user =>
-                sendEmail(user.email, "Freezer Warning", message)
-              }
-            }
-              // record this reading to the container's CSV
-            recordReading(index, email, temperature, status, time)
+          Ok("Update complete\n")
+        }.getOrElse {
+          (json \ "error").asOpt[String].map { error =>
+            val message = "ERROR: " + error
+            Container.alarm(index, username, message, time)
+
+            Container.addReading(index, username, -10000, message, time)
+
+            // record this error to the container's CSV; using 0 is easier than
+            // making an entirely new class of functions for recording errors
+            recordReading(index, username, -10000, message, time)
 
             Ok("Update complete\n")
-          }.getOrElse { BadRequest("Missing parameter: status\n") }
-        }.getOrElse { BadRequest("Missing parameter: temperature\n") }
-      }
+          }.getOrElse { 
+            BadRequest("Bad parameters\n") 
+          }
+        }
     }.getOrElse { BadRequest("Expecting JSON data\n") }
   }
 }

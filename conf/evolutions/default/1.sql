@@ -25,8 +25,11 @@ CREATE TABLE IF NOT EXISTS container (
   temperature_expected	    DOUBLE,
   temperature_range	    DOUBLE,
   read_frequency 	    INT,
-  monitor_id		    INT
-);
+  monitor_id		    INT,
+  last_read_temperature	    DOUBLE,
+  last_read_status	    VARCHAR(255),
+  last_read_time	    DATETIME
+) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS container_list (
   entry_number 	    	   INT PRIMARY KEY AUTO_INCREMENT,
@@ -41,7 +44,7 @@ CREATE TABLE IF NOT EXISTS container_list (
 CREATE TABLE IF NOT EXISTS container_readings (
   reading_id    	   INT PRIMARY KEY AUTO_INCREMENT,
   container_id 		   INT NOT NULL,
-  read_temperature 	   DOUBLE NOT NULL,
+  read_temperature 	   DOUBLE,
   read_status 		   VARCHAR(255) NOT NULL,
   read_time 		   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   read_note		   VARCHAR(1023),

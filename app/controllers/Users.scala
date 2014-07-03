@@ -26,6 +26,12 @@ object UserController extends Controller with Secured {
 
   def Home = Redirect(routes.Application.login)
   def ContainerPage = Redirect(routes.ContainerController.list(0, 1, ""))
+
+  /*
+   * Form for creating a new user. At the moment there's a bug with password
+   * errors not appearing (i.e. when they don't match), and the form won't 
+   * accept any date even though it's given in the dd/MM/yyyy format
+   */
   val createUserForm = {
     Form(
       mapping(
@@ -33,7 +39,7 @@ object UserController extends Controller with Secured {
         "name_last" -> nonEmptyText,
         "email" -> nonEmptyText.verifying(
           Messages("Email not available"),
-          email => !User.findByEmail("email").isDefined
+          email => !User.getByEmail("email").isDefined
         ),
         "password" -> tuple(
           "main" -> text(minLength = 6),
@@ -54,12 +60,17 @@ object UserController extends Controller with Secured {
     )
   }
 
+  /*
+   * Form for adding an admin to a user's account
+   * 
+   * @param user User to add the admin to
+   */
   def addAdminForm(user: User) = {
     Form (
       mapping(
         "email" -> email.verifying(
           Messages("Admin is already a member of this list"),
-          email => !User.findByEmailWithListNum(
+          email => !User.getByEmailWithListNum(
             email, 
             User.getListNum(user.email)
           ).isDefined
@@ -68,10 +79,16 @@ object UserController extends Controller with Secured {
     )
   }
 
+  /*
+   * Serve the user with the create user form
+   */
   def generate() = Action { implicit request =>
     Ok(html.createUserForm(createUserForm))
   }
 
+  /*
+   * Handle create user form submission
+   */
   def create() = Action { implicit request =>
     createUserForm.bindFromRequest.fold(
       formWithErrors => BadRequest(
@@ -84,15 +101,21 @@ object UserController extends Controller with Secured {
     )
   }
 
+  /*
+   * Serve user with edit admin form
+   */
   def editAdmins() = IsAuthenticated { username => implicit request =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       val admins = User.getByListNum(User.getListNum(user.email))
       Ok(html.editAdminForm(addAdminForm(user), user, admins))
     }.getOrElse(Forbidden)
   }
 
+  /*
+   * Handle admin form submission
+   */
   def submitAdmin() = IsAuthenticated { username => implicit request =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       val admins = User.getByListNum(User.getListNum(user.email))
       addAdminForm(user).bindFromRequest.fold(
         formWithErrors => BadRequest(
@@ -106,9 +129,12 @@ object UserController extends Controller with Secured {
     }.getOrElse(Forbidden)
   }
 
+  /*
+   * Handle deletion of admin
+   */
   def deleteAdmin(email: String) = IsAuthenticated { 
     username => implicit request =>
-    User.findByEmail(username).map { user =>
+    User.getByEmail(username).map { user =>
       User.delete(email)
       Redirect(routes.UserController.editAdmins)
     }.getOrElse(Forbidden)

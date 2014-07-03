@@ -133,7 +133,7 @@ table th, table td {
   text-align:left;
 }
 
-table th{
+table th {
   padding-top:9px;
   font-weight:bold;
   vertical-align:middle;
@@ -176,10 +176,26 @@ table tbody tr:last-child td:last-child {
   border-radius:0 0 4px 0;
 }
 
-.zebra-striped tbody tr:nth-child(odd) td {
+.zebra-striped tbody tr.standard:nth-child(odd) td {
+  background-color:#e6e6e6;
+}
+
+.zebra-striped tbody tr.standard:hover td {
   background-color:#d2d2d2;
 }
 
-.zebra-striped tbody tr:hover td {
-  background-color:#3d3d3d;
+.zebra-striped tbody tr.error {
+  background-color:#FF6666;
+}
+
+.zebra-striped tbody tr.error:hover {
+  background-color:#FF3030;
+}
+
+.zebra-striped tbody tr.error:nth-child(odd):hover td {
+  background-color:#FF3030;
+}
+
+.zebra-striped tbody tr.error:nth-child(odd) {
+  background-color:#FF6666;
 }

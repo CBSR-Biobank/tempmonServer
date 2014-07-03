@@ -22,15 +22,21 @@ import Monitor._
 import Page._
 import User._
 
+/**
+ * Case class for the container as it is represented in MySQL
+ */
 case class Container(
   id: Pk[Long] = NotAssigned,
   name: String,
   temperatureExpected: Option[Double], 
   temperatureRange: Option[Double],
   readFrequency: Option[Long],
-  monitorID: Option[Long] 
+  monitorID: Option[Long]
 )
 
+/**
+ * Case class for a single reading for a container
+ */
 case class ContainerReading(
   id: Pk[Long] = NotAssigned,
   readTemperature: Double,
@@ -38,6 +44,9 @@ case class ContainerReading(
   readTime: Date
 )
 
+/**
+ * Similar to ContainerReading but with note for user viewing.
+ */
 case class ContainerReadData(
   readID: Long,
   readTemperature: Double,
@@ -46,6 +55,9 @@ case class ContainerReadData(
   readNote: Option[String]
 )
 
+/**
+ * Case class for a container as it appears on the container list page
+ */
 case class ContainerListView(
   index: Long, 
   name: String,
@@ -54,6 +66,9 @@ case class ContainerListView(
   lastReadTime: Option[Date]
 )
 
+/**
+ * Case class for container as it appears on the edit container page
+ */
 case class ContainerEditData(
   name: String,
   temperatureExpected: Option[Double],
@@ -62,6 +77,9 @@ case class ContainerEditData(
   monitorID: Option[Long]
 )
 
+/**
+ * Case class for container as it appears on the create container page
+ */
 case class ContainerCreateData(
   name: String,
   index: Long, 
@@ -71,8 +89,14 @@ case class ContainerCreateData(
   monitorID: Option[Long]
 )
 
+/**
+ * Case class wasn't really necessary, mostly added it here for consistency
+ */
 case class ContainerNote(note: String)
 
+/**
+ * Case class for determining if a container has a reading that is overdue
+ */
 case class ContainerReadOverdueData(
   listNumber: Long,
   index: Long,
@@ -86,7 +110,7 @@ object Container
   implicit def javaFloatToDouble(f: java.lang.Float) = f.doubleValue
 
   // -- Parsers 
-/**
+  /**
    * Parse a Container from a ResultSet
    */
   val simple = {
@@ -103,19 +127,24 @@ object Container
     }
   }
 
+  /**
+   * Parse a container from a ResultSet, including its last reading
+   */
   val listView = {
     get[Long]("container_list.container_index") ~ 
     get[String]("container.name") ~
-    get[Option[Double]]("read_temperature") ~
-    get[Option[String]]("read_status") ~
-    get[Option[Date]]("read_time") map {
-      case (index~name~lastReadTemperature~lastReadStatus~
-          lastReadTime) =>
+    get[Option[Double]]("container.last_read_temperature") ~
+    get[Option[String]]("container.last_read_status") ~
+    get[Option[Date]]("container.last_read_time") map {
+      case (index~name~lastReadTemperature~lastReadStatus~lastReadTime) =>
         ContainerListView(index, name, lastReadTemperature, lastReadStatus,
           lastReadTime)
     }
   }
 
+  /**
+   * Parse a reading from a ResultSet
+   */
   val reading = {
     get[Long]("container_readings.reading_id") ~
     get[Double]("container_readings.read_temperature") ~
@@ -127,6 +156,9 @@ object Container
     }
   }
 
+  /**
+   * Parse an overdue reading from a ResultSet
+   */
   val readingOverdue = {
     get[Long]("container_list.list_number") ~
     get[Long]("container_list.container_index") ~
@@ -140,24 +172,33 @@ object Container
   }
 
   /**
-   * Parse a (Container,Monitor) from a ResultSet
+   * Parse a (Container, Monitor) from a ResultSet
    */
   val withMonitor = Container.simple ~ (Monitor.simple ?) map {
     case container~monitor => (container, monitor)
   }
   
+  /**
+   * Since edit data is a subset of a full container data, convert a container 
+   * to its edit data by removing a few parameters
+   */
   def toEdit(container: Container) = ContainerEditData(container.name, 
     container.temperatureExpected, container.temperatureRange, 
     container.readFrequency, container.monitorID)
 
+  /**
+   * Reduce a container to just its note, if it has one.
+   */
   def toEditNote(reading: ContainerReadData) = ContainerNote(reading.readNote.getOrElse(""))
 
   // -- Queries
   
   /**
    * Retrieve a container by the given id.
+   * 
+   * @param id ID of the container
    */
-  def findByID(id: Long): Option[Container] = {
+  def getByID(id: Long): Option[Container] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT * FROM container WHERE id = {id}").on(
         'id -> id
@@ -166,8 +207,11 @@ object Container
   }
 
   /**
-    * Get the index of this container associating it to its user's container list.
-    */
+   * Get the index of this container associating it to its user's container 
+   * list. 
+   * 
+   * @param container Container for which index is desired
+   */
   def getContainerIndex(container: Container): Long = {
     DB.withConnection { implicit connection =>
       SQL(
@@ -185,11 +229,14 @@ object Container
     }
   }
 
-  /*
+  /**
    * Get container associated to user with email 'email' that has index in that
    * user's container list of 'id'
+   * 
+   * @param index Index of the desired container
+   * @param email Email of the user searching for container with given index
    */
-  def findUnderAdminByIndex(index: Long, email: String): Option[Container] = {
+  def getOwnedByAdminByIndex(index: Long, email: String): Option[Container] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -210,11 +257,17 @@ object Container
     }
   }
   
-  /*
+  /**
    * Get all containers belonging to admin with email 'email', and the most 
    * recent reading from each container.
+   * 
+   * @param email Email of user we want containers from
+   * @param page Page number of containers 
+   * @param pageSize Number of containers to appear per page
+   * @param orderBy How to order the containers
+   * @param filter String container name must contain to appear in this list
    */
-  def findUnderAdmin(
+  def getOwnedByAdmin(
     email: String, 
     page: Int = 0, 
     pageSize: Int = 10,
@@ -228,9 +281,9 @@ object Container
         """ 
         SELECT fl.container_index,
                f.name,
-               fr.read_temperature,
-               fr.read_status,
-               fr.read_time
+               f.last_read_temperature,
+               f.last_read_status,
+               f.last_read_time
         FROM container_list AS fl
  
         JOIN container AS f 
@@ -238,23 +291,6 @@ object Container
 
         JOIN user AS u
         ON u.container_list_number = fl.list_number
-
-        LEFT JOIN (
-          SELECT frb.* 
-          FROM container_readings AS frb
-
-          JOIN (
-            SELECT container_id,
-                   max(read_time) as max_time
-            FROM container_readings
-            
-            GROUP BY container_id
-          ) AS fra
-          on fra.container_id = frb.container_id 
-          AND fra.max_time = frb.read_time
-
-        ) AS fr 
-        ON fr.container_id = fl.container_id
 
         WHERE u.email = {email}
         AND f.name LIKE {filter}        
@@ -292,7 +328,8 @@ object Container
   /**
    * Update a container.
    *
-   * @param id The container id
+   * @param index The container index
+   * @param email The email of the user performing the update
    * @param container The container values.
    */
   def update(index: Long, email: String, container: ContainerEditData) = {
@@ -330,7 +367,7 @@ object Container
    * Insert a new container.
    *
    * @param container The container values.
-   
+   * @param admins Users who have this container in their list
    */
   def insert(container: ContainerCreateData, admins: Seq[String]) = {
     DB.withConnection { implicit connection =>
@@ -377,7 +414,8 @@ object Container
   /**
    * Delete a container.
    *
-   * @param id ID of the container to delete.
+   * @param index Index of the container to delete.
+   * @param email Email of the admin with container to delet
    */
   def delete(index: Long, email: String) = {
     DB.withConnection { implicit connection =>
@@ -397,18 +435,21 @@ object Container
     }
   }
 
-
+  /**
+   * Get all admins of given container
+   * 
+   * @param container Retrieves owners of this container
+   */
   def adminsOf(container: Container): Seq[User] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          SELECT user.* 
-          FROM user u
+          SELECT * FROM user u
 
           JOIN container_list l 
           ON l.list_number = u.container_list_number
 
-          where l.container_id = {containerID}
+          WHERE l.container_id = {containerID}
         """
       ).on(
         'containerID -> container.id.get
@@ -416,15 +457,23 @@ object Container
     }
   }
 
+  /**
+   * Determines if given user is an admin of container with given id
+   * 
+   * @param container_id ID of container in question
+   * @param user Email of user
+   */
   def isAdmin(container_id: Long, user: String): Boolean = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          select count(user.email) = 1 from user
-          join container_list on 
+          SELECT COUNT(user.email) = 1 FROM user
+
+          JOIN container_list ON 
             container_list.list_number = user.container_list_number
-          where container_list.container_id = {id}
-          and user.email = {email}
+
+          WHERE container_list.container_id = {id}
+          AND USER.EMAIL = {EMAIL};
         """
       ).on(
         'id -> container_id,
@@ -433,7 +482,7 @@ object Container
     }
   }
 
-  /*
+  /**
    * convert the container with index into a Json object for a client
    * data includes:
    *   - time until next update
@@ -443,36 +492,56 @@ object Container
    *       i.  Product ID
    *       ii. Vendor ID
    *   - where to upload reading
+   * 
+   * @param index Index of container to JSONify
+   * @param user Email of user with given container index
    */
   def toJson(index: Long, user: String): Option[JsObject] = {
     // time until next upload = (last upload)+(read freq)-(now)
     // if the time to next upload is negative, set as 0
-    Container.findUnderAdminByIndex(index, user).map { container =>
-      val uploadURL: String = "/containers/"+index.toString+("/uploadpkg.json")
+    Container.getOwnedByAdminByIndex(index, user).map { container =>
+      val uploadURL: String = "/containers/"+index.toString+("/readings")
 
-      val now = new Date().getTime()
-      val lastRead = Container.getLastReadTime(container)
       val freq: Long = container.readFrequency.getOrElse{900}
-
-      val temp: String = container.temperatureExpected.getOrElse{"-80.0"}.toString
-      val tempRange: String = container.temperatureRange.getOrElse{"15.0"}.toString
 
       val monitorID: Long = container.monitorID.getOrElse{1}
       val monitor: JsObject = Monitor.toJson(monitorID).getOrElse{Json.obj()}
 
-      Json.obj(
-        "specifications" -> Json.obj(
-          "nextUpdateIn"->roundTime(((lastRead+(freq*1000)-now))/1000).toString(),
-          "expectedTemperature" -> temp,
-          "temperatureRange" -> tempRange,
-          "monitor" -> monitor,
-          "uploadURL" -> uploadURL
+      Container.getLastReading(container).map { lastReading =>
+        val now = new Date().getTime()
+
+        val lastReadTime = lastReading.readTime.getTime().toLong
+        val lastReadStatus = lastReading.readStatus
+
+        Json.obj(
+          "specifications" -> Json.obj(
+            "nextUpdateIn"->roundTime(((lastReadTime+(freq*1000)-now))/1000).toString(),
+            "lastReadStatus"->lastReadStatus,
+            "monitor" -> monitor,
+            "uploadURL" -> uploadURL
+          )
         )
-      )
+      }.getOrElse{
+        Json.obj(
+          "specifications" -> Json.obj(
+            "nextUpdateIn"-> "0",
+            "lastReadStatus"->"",
+            "monitor" -> monitor,
+            "uploadURL" -> uploadURL
+          )
+        )
+      }
     }
   }
-  /*
+
+  /**
    * Update a container with given index under given user with data from JsVal
+   * 
+   * @param index Index of container to add reading to
+   * @param user Email of user with given container
+   * @param temperature Temperature of uploaded reading
+   * @param status Status of uploaded reading
+   * @param time Time/date at which reading was uploaded
    */
   def addReading(
     index: Long, 
@@ -481,7 +550,7 @@ object Container
     status:String, 
     time: Date
   ) = {
-    val container = findUnderAdminByIndex(index, user).get
+    val container = getOwnedByAdminByIndex(index, user).get
 
     DB.withConnection { implicit connection =>
       SQL(
@@ -505,9 +574,33 @@ object Container
         'status -> status,
         'time -> time
       ).executeUpdate()
+
+      SQL(
+        """
+          UPDATE container AS c
+
+          SET last_read_temperature = {temperature},
+              last_read_status = {status},
+              last_read_time = {time}
+
+          WHERE c.id = {id}
+        """
+      ).on(
+        'id -> container.id,
+        'temperature -> temperature,
+        'status -> status,
+        'time -> time
+      ).executeUpdate()
     }
   }
 
+  /**
+   * Add note to container reading
+   * 
+   * @param containerID ID of container with reading being added to
+   * @param readID ID of reading being added to
+   * @param containerNote note to add to reading
+   */
   def addNote(
     containerID: anorm.Pk[Long],
     readID: Long,
@@ -517,11 +610,9 @@ object Container
       SQL(
         """
           UPDATE container_readings as c
-            SET read_note = IF(
-                               read_note IS NULL, 
+            SET read_note = IF(read_note IS NULL, 
                                {note}, 
-                               CONCAT(c.read_note, "; ", {note})
-                              ),
+                               CONCAT(c.read_note, "; ", {note})),
                 read_time = read_time
 
             WHERE container_id = {id}
@@ -535,59 +626,114 @@ object Container
     }
   }
 
-  /*
+  /**
    * Get all readings for the given container under the given user
+   * 
+   * @param index Index of container to get readings for
+   * @param user Email of user with given container
+   * @param page Page number of readings to return
+   * @param pageSize Number of readings to return per page
+   * @param orderBy what column to order readings by
+   * @param filterErrors 1 = show only unresolved errors/warnings 0 = show all
    */
   def getReadings(
     index: Long, 
     user: String, 
     page: Int, 
     pageSize: Int = 10,
-    orderBy: Int = 3
+    orderBy: Int = 3,
+    filterErrors: Int = 0
   ): Page[ContainerReadData] = {
-    val container = findUnderAdminByIndex(index, user).get
+    val container = getOwnedByAdminByIndex(index, user).get
     val offset = pageSize * page
 
     DB.withConnection { implicit connection =>
-      val readings = SQL(
-        """
-          SELECT fr.reading_id,
-                 fr.read_temperature, 
+      if (filterErrors == 1) {
+        val readings = SQL(
+          """
+            SELECT fr.reading_id,
+                   fr.read_temperature, 
+                   fr.read_status,
+                   fr.read_time,
+                   fr.read_note
+            FROM container_readings AS fr
+          
+            WHERE fr.container_id = {containerID}
+            AND fr.read_note IS NULL
+            AND (fr.read_status LIKE '%ERROR%'
+            OR fr.read_status LIKE '%WARNING%')
+          
+            ORDER BY read_time DESC
+            LIMIT {pageSize} OFFSET {offset};
+          """
+        ).on(
+          'containerID -> container.id,
+          'orderBy -> orderBy,
+          'pageSize -> pageSize,
+          'offset -> offset
+        ).as(Container.reading *)
+
+        val totalReadings = SQL(
+          """
+            SELECT count(*) 
+            FROM container_readings AS fr
+          
+            WHERE fr.container_id = {id}
+            AND fr.read_note IS NULL
+            AND (fr.read_status LIKE '%ERROR%'
+            OR fr.read_status LIKE '%WARNING%');
+          """
+        ).on(
+          'id -> container.id
+        ).as(scalar[Long].single)
+
+        Page(readings, page, offset, totalReadings)
+      } else {
+        val readings = SQL(
+          """
+          select fr.read_temperature,
                  fr.read_status,
                  fr.read_time,
+                 fr.reading_id,
                  fr.read_note
-          FROM container_readings AS fr
-          
-          WHERE fr.container_id = {containerID}
-          
-          ORDER BY read_time DESC
-          LIMIT {pageSize} OFFSET {offset};
-        """
-      ).on(
-        'containerID -> container.id,
-        'orderBy -> orderBy,
-        'pageSize -> pageSize,
-        'offset -> offset
-      ).as(Container.reading *)
+          from container_readings as fr
+           
+          where fr.container_id = {containerID}
 
-      val totalReadings = SQL(
-        """
+          order by fr.read_time desc
+          LIMIT {pageSize} OFFSET {offset};
+          """
+        ).on(
+          'containerID -> container.id,
+          'orderBy -> orderBy,
+          'pageSize -> pageSize,
+          'offset -> offset
+        ).as(Container.reading *)
+
+        val totalReadings = SQL(
+          """
           SELECT count(*) 
           FROM container_readings AS fr
           
           WHERE fr.container_id = {id};
         """
-      ).on(
-        'id -> container.id
-      ).as(scalar[Long].single) 
-
-      Page(readings, page, offset, totalReadings)
+        ).on(
+          'id -> container.id
+        ).as(scalar[Long].single)
+       
+        Page(readings, page, offset, totalReadings)
+      } 
     }
   }
 
-  def getLastReadTime(container: Container): Long = {
+  /**
+   * Get the time of the given container's last reading
+   * 
+   * @param container Container of interest
+   */
+  def getLastReading(container: Container): Option[ContainerReadData] = {
     DB.withConnection { implicit connection =>
-      val reading = SQL(
+      SQL(
         """
           select fr.read_temperature,
                  fr.read_status,
@@ -604,13 +750,15 @@ object Container
       ).on(
         'containerID -> container.id
       ).as(Container.reading.singleOpt) 
-
-      reading.map { read =>
-        read.readTime.getTime().toLong
-      }.getOrElse{ 0 }
     }
   }
 
+  /**
+   * Get specific reading from given container
+   * 
+   * @param container Container with reading in question
+   * @param readID ID of the reading to return
+   */
   def getContainerReading(container: Container, readID: Long) = {
     DB.withConnection { implicit connection =>
       SQL(
@@ -632,7 +780,7 @@ object Container
     }
   }
 
-  /*
+  /**
    * user1 <-> | container1 <-> last reading
    *             container2 <-> last reading
    *                       ...
@@ -692,5 +840,56 @@ object Container
       return containers
     }
   }
+
+  def getStatus(
+    index: Long,
+    email: String,
+    temperature: Double
+  ) = {
+    Container.getOwnedByAdminByIndex(index, email).map { c =>
+      temperature match {
+        case x if x < (c.temperatureExpected.get - c.temperatureRange.get) =>
+          "WARNING: temperature below expected range"
+        case x if x > (c.temperatureExpected.get + c.temperatureRange.get) =>
+          "WARNING: temperature above expected range"
+        case _ =>
+          "OK"
+      }
+    }.getOrElse("")
+  }
+
+  // Alarm for warnings
+  def alarm(
+    index: Long,
+    email: String,
+    temperature: Double,
+    status: String,
+    time: Date
+  ) = {
+    Container.getOwnedByAdminByIndex(index, email).map { c =>
+      val title = "CBSR Freezer alarm"
+      val message = c.name + " #" + index.toString + " recorded a temperature of " + temperature + " and has recorded the following warning:\n\n" + status + "\n\nrecorded at " + time.toString + "."
+      Container.adminsOf(c).map { admin =>
+        Email.sendEmail(admin.email, title, message)
+      }
+    }
+  }
+
+  // Alarm for errors
+  def alarm(
+    index: Long,
+    email: String,
+    error: String,
+    time: Date
+  ) = {
+    Container.getOwnedByAdminByIndex(index, email).map { c =>
+      val title = "CBSR Freezer alarm"
+      val message = c.name + " #" + index.toString + " has recorded the following error:\n\n" + error + "\n\nrecorded at " + time.toString + "."
+      Container.adminsOf(c).map { admin =>
+        Email.sendEmail(admin.email, title, message)
+      }
+    }
+  }
+
 }
 

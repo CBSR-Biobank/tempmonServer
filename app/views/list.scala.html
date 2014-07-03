@@ -27,25 +27,18 @@
 @main(user = user) {
 <sectionHeader>
   <headerLeft>
-    @helper.form(action=routes.ContainerController.list()) {
-    <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by container name...">
-    <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
-    }
+    Container List
   </headerLeft>
   <headerRight>
-    <a class="btn success" id="add" href="@routes.ContainerController.create()">
+    @helper.form(action=routes.ContainerController.list(), 'style -> "display:inline-block;") {
+    <input style="display:inline-block;" type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by container name...">
+    <input style="display:inline-block;" type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+    }
+    <a style="display:inline-block;" class="btn success" id="add" href="@routes.ContainerController.create()">
       Add a new container
     </a> 
   </headerRight>
 </sectionHeader>
-
-<sectionSubHeader>
-  @flash.get("success").map { message =>
-  <div class="alert-message warning">
-    <strong>Done!</strong> @message
-  </div>
-  }
-</sectionSubHeader>
 
 <sectionBody>
   <table class="containers zebra-striped">
@@ -62,7 +55,7 @@
     <tbody>
       @containers.map { 
       case container => {
-      <tr>
+      <tr class="standard">
 	<td>
 	  @container.index
 	</td>

@@ -1,4 +1,4 @@
-@(currentPage: Page[ContainerReadData], currentOrderBy:Int, container: Container, user: User, index: Long)
+@(currentPage: Page[ContainerReadData], currentOrderBy:Int, container: Container, user: User, index: Long, showErrors:Int)
 
 @import helper._
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
@@ -8,13 +8,14 @@
 @****************************************
 * Helper generating navigation links    *
 ****************************************@
-@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+@link(newPage: Int, newOrderBy: Option[Int] = None, showErrors: Int = 0) = @{
   routes.ContainerController.details(
     index, 
     newPage, 
+    showErrors,
     newOrderBy.map { orderBy =>
       if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
-    }.getOrElse(currentOrderBy)) 
+    }.getOrElse(currentOrderBy))
 }
 
 @**********************************
@@ -31,7 +32,12 @@
   <headerLeft>
     @container.name #@index
   </headerLeft>
-  <headerRight>
+  <headerRight style="display:inline-block;">
+    @if(showErrors == 0) {
+    <a class="btn danger" href="@routes.ContainerController.details(index, 0, 1, -3)"> Show unresolved errors </a>
+    } else {
+    <a class="btn info" href="@routes.ContainerController.details(index, 0, 0, -3)"> Show all readings </a>
+    }
     <a class="btn success" id="add" href="@routes.ContainerController.edit(index)" style="margin-bottom:18px">
       Edit container
     </a> 
@@ -52,7 +58,11 @@
     <tbody>
       @readings.map { 
       case reading => {
-      <tr>
+	@if(((reading.readStatus contains "WARNING") || (reading.readStatus contains "ERROR")) && !reading.readNote.isDefined) {
+      <tr class="error">
+	} else { 
+      <tr class="standard"> 
+	}
 	<td>
 	  @reading.readTemperature
 	</td>
@@ -80,7 +90,7 @@
       <ul class="pagination" style="margin-left:30%; width=25%">
 	@currentPage.prev.map { page =>
 	<li class="prev">
-          <a href="@link(page)">&larr; More recent</a>
+          <a href="@link(page, None, showErrors)">&larr; More recent</a>
 	</li> 
 	}.getOrElse {
 	<li class="prev disabled">
@@ -93,7 +103,7 @@
 	
 	@currentPage.next.map { page =>
 	<li class="next">
-          <a href="@link(page)">Less recent &rarr;</a>
+          <a href="@link(page, None, showErrors)">Less recent &rarr;</a>
 	</li> 
 	}.getOrElse {
 	<li class="next disabled">

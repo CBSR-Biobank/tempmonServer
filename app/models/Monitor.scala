@@ -36,6 +36,11 @@ object Monitor {
       c.id.toString -> c.name)
   }
 
+  /**
+   * Find a monitor by a given id
+   * 
+   * @param id ID of monitor to find
+   */
   def findByID(id: Long): Option[Monitor] = {
     DB.withConnection { implicit connection =>
       SQL("select * from monitor where id = {id}").on(
@@ -44,6 +49,11 @@ object Monitor {
     }
   }
 
+  /**
+   * Create a JSON object representing monitor with given id
+   * 
+   * @param id ID of monitor to JSONify
+   */
   def toJson(id: Long): Option[JsObject] = {
     Monitor.findByID(id).map { monitor =>
       Json.obj(

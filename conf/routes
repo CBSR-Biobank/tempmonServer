@@ -4,15 +4,16 @@
 # User stuff
 POST   /user/create		controllers.UserController.create
 
-GET    /admin/edit		controllers.UserController.editAdmins
-POST   /admin/add		controllers.UserController.submitAdmin
+GET    /admins/edit		controllers.UserController.editAdmins
+POST   /admins/add		controllers.UserController.submitAdmin
 
-POST   /admin/:email/delete	controllers.UserController.deleteAdmin(email)
+POST   /admins/:email/delete	controllers.UserController.deleteAdmin(email)
+
 # Home page
 GET    /			controllers.ContainerController.index
 
 GET    /login			controllers.Application.login
-GET    /authenticate		controllers.Application.authenticate
+POST   /authenticate		controllers.Application.authenticate
 GET    /logout			controllers.Application.logout 
 
 # Container list (look at the default values for pagination parameters)
@@ -23,7 +24,8 @@ GET     /containers/new		controllers.ContainerController.create
 POST    /containers		controllers.ContainerController.save
 
 # View container
-GET 	/containers/:index/readings	controllers.ContainerController.details(index:Long, p:Int ?= 0, s:Int ?=-3)
+GET 	/containers/:index/readings	controllers.ContainerController.details(index:Long, p:Int ?= 0, e:Int ?= 0, s:Int ?=-3)
+PUT 	/containers/:id/readings	  controllers.ContainerController.addReading(id:Long)
 
 # Edit existing container
 GET 	/containers/:index/specifications/edit controllers.ContainerController.edit(index:Long)
@@ -34,8 +36,8 @@ GET     /containers/:index/readings/:readID/note/edit	controllers.ContainerContr
 POST	/containers/:index/readings/:readID/note/edit	controllers.ContainerController.updateNote(index: Long, readID: Long)
 
 # Get the JSON representation of the monitor requirements for this container
-PUT    /containers/:id/specifications/clientpkg.json	  controllers.ContainerController.clientPackage(id:Long)
-PUT 	/containers/:id/uploadpkg.json	  controllers.ContainerController.handleUpload(id:Long)
+GET    /containers/:id/specifications	  controllers.ContainerController.JSONify(id:Long)
+
 
 # Delete a container
 POST    /containers/:id/delete	controllers.ContainerController.delete(id:Long)

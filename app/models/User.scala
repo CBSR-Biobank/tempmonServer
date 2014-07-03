@@ -7,6 +7,9 @@ import anorm._
 import anorm.SqlParser._
 
 import java.util.{Date}
+import java.security._
+
+import scala.util._
 
 case class User(email: String, name: String, password: String)
 
@@ -41,8 +44,10 @@ object User {
   
   /**
    * Retrieve a User from email.
+   * 
+   * @param email Email of user in question
    */
-  def findByEmail(email: String): Option[User] = {
+  def getByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("select * from user where email = {email}").on(
         'email -> email
@@ -50,7 +55,15 @@ object User {
     }
   }
   
-  def findByEmailWithListNum(email: String, listNum: Long) = {
+  /*
+   * Basically get a user by email, but with the stipulation that they have 
+   * the given container list number. Saves having to query whether or not
+   * the user found by email has a container list number.
+   * 
+   * @param email Email of user to return
+   * @param listNum Container list number of user
+   */
+  def getByEmailWithListNum(email: String, listNum: Long) = {
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -69,7 +82,7 @@ object User {
   /**
    * Retrieve all users.
    */
-  def findAll: Seq[User] = {
+  def getAll: Seq[User] = {
     DB.withConnection { implicit connection =>
       SQL("select * from user").as(User.simple *)
     }
@@ -77,6 +90,9 @@ object User {
   
   /**
    * Authenticate a User.
+   * 
+   * @param email Submitted email value
+   * @param password Submitted password value
    */
   def authenticate(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
@@ -92,6 +108,12 @@ object User {
     }
   }
 
+  /**
+   * Verify that the given email/password pair are valid
+   * 
+   * @param email Email to verify
+   * @param password Password to verify
+   */
   def valid(email: String, password: String): Boolean = {
     DB.withConnection { implicit connection =>
       val valid = SQL(
@@ -116,6 +138,8 @@ object User {
    
   /**
    * Create a User.
+   * 
+   * @param user Data required to create a new user
    */
   def create(user: UserCreateData) = {
     DB.withConnection { implicit connection =>
@@ -154,10 +178,14 @@ object User {
     }
   }
 
-  def getListNum(email: String): Int = {
-    // retrieve the list number of the user with given email; returns the user's
-    // list number if found or 0 if not
-    User.findByEmail(email).map { user =>
+  /*
+   * retrieve the list number of the user with given email; returns the user's
+   * list number if found or 0 if not (not very functional, I know)
+   * 
+   * @param email Email to search for
+   */
+  def getListNum(email: String): Int = { 
+    User.getByEmail(email).map { user =>
       DB.withConnection { implicit connection =>
         SQL (
           """
@@ -168,6 +196,11 @@ object User {
     }.getOrElse(0)
   }
 
+  /*
+   * Get all users with given container list number
+   * 
+   * @param listNum Container list number to search by
+   */
   def getByListNum(listNum: Long): List[UserEmail] = {
     DB.withConnection { implicit connection =>
       val users = SQL (
@@ -186,6 +219,9 @@ object User {
     }
   }
 
+  /*
+   * Add an admin, i.e. a user 
+   */
   def addAdmin(admin: String, listNum: Long) = {
     DB.withConnection { implicit connection =>
       SQL (
@@ -203,7 +239,7 @@ object User {
             {email}, 
             "Fake",
             "Name",
-            "afjkdksafj319j039jdojxncpijqwdjjccxasd",
+            {password},
             "1-2-3",
             "O",
             "CA",
@@ -212,6 +248,7 @@ object User {
           """
       ).on(
         'email -> admin,
+        'password -> "",
         'listNum -> listNum
       ).executeUpdate()
     }

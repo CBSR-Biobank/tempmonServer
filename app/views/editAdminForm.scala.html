@@ -30,7 +30,7 @@
     </thead>
     <tbody>
       @admins.map{ admin => 
-      <tr>
+      <tr class="standard">
 	<td style="padding-top:25px">
           @admin.email
 	</td>
@@ -41,8 +41,9 @@
 	</td>
       </tr>
       }
+      <tr class="standard"></tr>
       @helper.form(routes.UserController.submitAdmin()) {
-      <tr>
+      <tr class="standard">
 	<td>
 	  @helper.inputText(
             adminForm("email"), 
