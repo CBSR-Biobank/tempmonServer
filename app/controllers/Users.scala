@@ -45,14 +45,13 @@ object UserController extends Controller with Secured {
           "main" -> text(minLength = 6),
           "confirm" -> text
         ).verifying(
-          // Add an additional constraint: both passwords must match
+          // constraint: both passwords must match
           Messages("Passwords don't match"),
           passwords => passwords._1 == passwords._2
         ).transform[String](
           {passwords => passwords._1}, 
           {password => password -> password}
         ),
-
         "birthday" -> nonEmptyText,
         "gender" -> nonEmptyText,
         "country" -> nonEmptyText
