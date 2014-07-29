@@ -1,0 +1,57 @@
+@(containerForm: Form[ContainerCreateData], monitors: Seq[(String, String)], user: User)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
+
+@main(user = user) { 
+<sectionHeader>
+  <headerLeft>New Container</headerLeft>
+</sectionHeader>
+<sectionBody>
+  @form(routes.ContainerController.save()) {
+  <fieldset>
+    @inputText(
+      containerForm("name"), 
+      '_label -> "Container name", 
+      '_showConstraints -> containerForm.error("name").isDefined
+    ) 
+    @inputText(
+      containerForm("index"), 
+      '_label -> "Container number (Unique)",
+      '_showConstraints -> containerForm.error("index").isDefined
+    )
+    @inputText(
+      containerForm("temperatureExpected"), 
+      '_label -> "Operating container temperature",
+      '_showConstraints -> false
+    ) 
+    
+    @inputText(
+      containerForm("temperatureRange"), 
+      '_label -> "Safe temperature range",
+      '_showConstraints -> false
+    )
+
+    @inputText(
+      containerForm("readFrequency"),
+      '_label -> "Read frequency (in seconds)",
+      '_showConstraints -> false
+    )
+
+    @select(
+      containerForm("monitor"), 
+      monitors, 
+      '_label -> "Monitor", '_default -> "-- Choose a monitor --",
+      '_showConstraints -> false
+    )
+  </fieldset>
+
+  <div class="actions">
+    <input type="submit" value="Create this container" class="btn primary"> or 
+    <a href="@routes.ContainerController.list()" class="btn">Cancel</a> 
+  </div>
+  }
+</sectionBody>
+
+}

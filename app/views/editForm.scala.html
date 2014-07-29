@@ -1,0 +1,60 @@
+@(index: Long, containerForm: Form[ContainerEditData], monitors : Seq[(String, String)], user: User)
+@import helper._
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main(user = user) {
+<sectionHeader>
+  <headerLeft>Edit Container Specifications</headerLeft> 
+</sectionHeader>
+<sectionBody>
+  
+  
+  @form(routes.ContainerController.update(index)) {
+  <fieldset> 
+    @inputText(
+      containerForm("name"), 
+      '_label -> "Container name",
+      '_showConstraints -> containerForm.error("name").isDefined
+    )
+    @inputText(
+      containerForm("temperatureExpected"), 
+      '_label -> "Operating container temperature",
+      '_showConstraints -> false
+    )
+    
+    @inputText(
+      containerForm("temperatureRange"), 
+      '_label -> "Safe temperature range",
+      '_showConstraints -> false
+    )
+    
+    @inputText(
+      containerForm("readFrequency"),
+      '_label -> "Read frequency (in seconds)",
+      '_showConstraints -> false
+    )
+    
+    @select(
+    containerForm("monitor"), 
+    monitors, 
+    '_label -> "Monitor", '_default -> "-- Choose a monitor --",
+    '_showConstraints -> false
+    )
+    
+  </fieldset>
+</sectionBody>
+<sectionFooter>  
+  <div class="actions">
+    <input type="submit" value="Save this container" class="btn primary"> or 
+    <a href="@routes.ContainerController.details(index=index)" class="btn">Cancel</a> 
+  </div> 
+  }
+  <span style="float:right">
+    @form(routes.ContainerController.delete(index), 'class -> "topRight") {
+    <input type="submit" value="Delete this container" class="btn danger">
+    } 
+  </span>
+  
+</sectionFooter>
+}
+  

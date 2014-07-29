@@ -1,0 +1,121 @@
+@(currentPage: Page[ContainerReadData], currentOrderBy:Int, container: Container, user: User, index: Long, showErrors:Int)
+
+@import helper._
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@import java.util.{Date}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage: Int, newOrderBy: Option[Int] = None, showErrors: Int = 0) = @{
+  routes.ContainerController.details(
+    index, 
+    newPage, 
+    showErrors,
+    newOrderBy.map { orderBy =>
+      if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+    }.getOrElse(currentOrderBy))
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(orderBy: Int, title: String) = {
+<th>
+  <span>@title</span>
+</th>
+}
+
+@main(user = user) {
+<sectionHeader style="height:20px; margin-bottom:18px;">
+  <headerLeft>
+    @container.name #@index
+  </headerLeft>
+  <headerRight style="display:inline-block;">
+    @if(showErrors == 0) {
+    <a class="btn danger" href="@routes.ContainerController.details(index, 0, 1, -3)"> Show unresolved errors </a>
+    } else {
+    <a class="btn info" href="@routes.ContainerController.details(index, 0, 0, -3)"> Show all readings </a>
+    }
+    <a class="btn success" id="add" href="@routes.ContainerController.edit(index)" style="margin-bottom:18px">
+      Edit container
+    </a> 
+  </headerRight>
+</sectionHeader>
+
+<sectionBody>
+  <table class="containers zebra-striped">
+    @Option(currentPage.items).filterNot(_.isEmpty).map { readings => 
+    <thead>
+      <tr>
+        @header(1, "Temperature")
+        @header(2, "Container Status")
+        @header(3, "Read Time")
+	@header(4, "Notes")
+      </tr>
+    </thead>
+    <tbody>
+      @readings.map { 
+      case reading => {
+	@if(((reading.readStatus contains "WARNING") || (reading.readStatus contains "ERROR")) && !reading.readNote.isDefined) {
+      <tr class="error">
+	} else { 
+      <tr class="standard"> 
+	}
+	<td>
+	  @reading.readTemperature
+	</td>
+	<td>
+	  @reading.readStatus
+	</td>
+	<td>
+	  @reading.readTime
+	</td>
+	<td style="max-width:200px; overflow: hidden; text-overflow:ellipsis;">
+	  @reading.readNote
+	</td>
+	<td>
+	  <a href="@routes.ContainerController.editNote(index, reading.readID)" style="float:right" title="Change or add note">
+	    +
+	  </a>
+	</td>
+      </tr>
+      }
+      }    
+    </tbody>
+  </table>
+</sectionBody>
+<sectionFooter>
+      <ul class="pagination" style="margin-left:30%; width=25%">
+	@currentPage.prev.map { page =>
+	<li class="prev">
+          <a href="@link(page, None, showErrors)">&larr; More recent</a>
+	</li> 
+	}.getOrElse {
+	<li class="prev disabled">
+          <a>&larr; More recent</a>
+	</li>
+	}
+	<li class="current">
+          <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + readings.size) of @currentPage.total</a>
+	</li>
+	
+	@currentPage.next.map { page =>
+	<li class="next">
+          <a href="@link(page, None, showErrors)">Less recent &rarr;</a>
+	</li> 
+	}.getOrElse {
+	<li class="next disabled">
+          <a>Less recent &rarr;</a>
+	</li>          
+	}
+      </ul>
+</sectionFooter>
+  }.getOrElse {
+  <div class="well">
+    <em style="margin-left:40%">Nothing to display</em>
+  </div>
+  }  
+
+}

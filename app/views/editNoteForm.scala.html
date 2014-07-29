@@ -1,0 +1,66 @@
+@(index: Long, readID: Long, temperature: Double, status: String, time: String, note: Option[String], noteForm: Form[ContainerNote], user: User)
+
+@import java.util.{Date}
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@header(orderBy: Int, title: String) = {
+<th>
+  <a>@title</a>
+</th>
+}
+
+@main(user = user) {
+<sectionHeader>
+  <headerLeft>
+    Edit Note
+  </headerLeft>
+</sectionHeader>
+<sectionBody>
+  <table class="containers zebra-striped">
+    <thead>
+      @header(1, "Temperature")
+      @header(2, "Container Status")
+      @header(3, "Read Time")
+      @header(4, "Notes")
+    </thead>
+    <tbody>
+      <tr>
+	<td>
+	  @temperature
+	</td>
+	<td>
+	  @status
+	</td>
+	<td>
+	  @time
+	</td>
+	<td>
+	  ...
+	</td>
+      </tr>
+    </tbody>
+  </table> 
+  <fieldset>
+  @helper.form(action = routes.ContainerController.updateNote(index, readID)){
+    @if(note.isDefined) {
+      <div class="clearfix">
+	<label>Note:</label>
+	<div class="input" style="width:700px;">@note</div>
+      </div>
+    }
+    @helper.inputText(
+      noteForm("note"), 
+      'style -> "width: 700px; display:inline-block", 
+      '_showConstraints -> false,
+      '_label -> "Add note:"
+    )
+    <div style="display:inline; margin-left:58.3%;">
+      <input type="submit" value="Save" class="btn primary" onclick="goBack()">
+      <a onclick="goBack()" class="btn">Cancel</a>
+    </div>
+  }
+  </fieldset>
+</sectionBody>
+}

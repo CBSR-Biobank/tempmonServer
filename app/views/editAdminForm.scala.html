@@ -1,0 +1,64 @@
+@(adminForm: Form[AdminAddData], user: User, admins: Seq[UserEmail])
+
+@import java.util.{Date}
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@header(orderBy: Int, title: String) = {
+<th>
+  <a>@title</a>
+</th>
+}
+
+@main(user = user) {
+<sectionHeader>
+  <headerLeft> Edit admins </headerLeft>
+</sectionHeader>
+<sectionBody>
+  @if(adminForm.hasErrors) {
+    @adminForm.errors.map { error =>
+      <span style="background-color: #D63333; margin-left:1%">
+	@error.message
+      </span>
+    }
+  }
+  <table class="containers zebra-striped" style="width:10%">
+    <thead>
+      @header(1, "Admin")
+      @header(2, "Action")
+    </thead>
+    <tbody>
+      @admins.map{ admin => 
+      <tr class="standard">
+	<td style="padding-top:25px">
+          @admin.email
+	</td>
+	<td>
+	  @form(routes.UserController.deleteAdmin(admin.email), 'class -> "topRight") {
+	  <input type="submit" value="Delete" class="btn danger">
+	  } 
+	</td>
+      </tr>
+      }
+      <tr class="standard"></tr>
+      @helper.form(routes.UserController.submitAdmin()) {
+      <tr class="standard">
+	<td>
+	  @helper.inputText(
+            adminForm("email"), 
+            'style -> "width: 700px; display:inline;", 
+            'placeholder -> "Add admin email here",
+            '_label -> null, 
+            '_showConstraints -> false
+	  )
+	</td>
+	<td> 
+	  <input type="submit" value="Save" class="btn primary">
+	</td>
+      </tr>
+    <tbody>
+
+  }
+</sectionBody>
+}

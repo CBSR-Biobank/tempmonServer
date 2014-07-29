@@ -1,0 +1,47 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+# User stuff
+POST   /user/create		controllers.UserController.create
+
+GET    /admin/edit		controllers.UserController.editAdmins
+POST   /admin/add		controllers.UserController.submitAdmin
+
+POST   /admin/:email/delete	controllers.UserController.deleteAdmin(email)
+# Home page
+GET    /			controllers.ContainerController.index
+
+GET    /login			controllers.Application.login
+GET    /authenticate		controllers.Application.authenticate
+GET    /logout			controllers.Application.logout 
+
+# Container list (look at the default values for pagination parameters)
+GET     /containers    	    	controllers.ContainerController.list(p:Int ?= 0, s:Int ?= 1, f ?= "")
+
+# Add container
+GET     /containers/new		controllers.ContainerController.create
+POST    /containers		controllers.ContainerController.save
+
+# View container
+GET 	/containers/:index/readings	controllers.ContainerController.details(index:Long, p:Int ?= 0, s:Int ?=-3)
+
+# Edit existing container
+GET 	/containers/:index/specifications/edit controllers.ContainerController.edit(index:Long)
+POST    /containers/edit	controllers.ContainerController.update(id:Long)
+
+# Add note to reading
+GET     /containers/:index/readings/:readID/note/edit	controllers.ContainerController.editNote(index:Long, readID:Long)
+POST	/containers/:index/readings/:readID/note/edit	controllers.ContainerController.updateNote(index: Long, readID: Long)
+
+# Get the JSON representation of the monitor requirements for this container
+PUT    /containers/:id/specifications/clientpkg.json	  controllers.ContainerController.clientPackage(id:Long)
+PUT 	/containers/:id/uploadpkg.json	  controllers.ContainerController.handleUpload(id:Long)
+
+# Delete a container
+POST    /containers/:id/delete	controllers.ContainerController.delete(id:Long)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file  	    	controllers.Assets.at(path="/public", file)
+
+# Remove trailing / from GETs
+GET	/*path/			controllers.Application.untrail(path: String)

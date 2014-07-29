@@ -1,0 +1,51 @@
+2014-06-04 10:48:03,797 - [INFO] - from play in pool-4-thread-5 
+Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+2014-06-04 10:48:22,646 - [INFO] - from play in play-internal-execution-context-1 
+database [default] connected at jdbc:mysql://localhost:3306/tempmonDB?characterEncoding=UTF-8
+
+2014-06-04 10:48:23,001 - [INFO] - from play in play-internal-execution-context-1 
+Starting application default Akka system.
+
+2014-06-04 10:48:23,034 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2014-06-04 10:49:50,299 - [INFO] - from play in play-internal-execution-context-1 
+Shutdown application default Akka system.
+
+2014-06-04 10:49:55,094 - [INFO] - from play in play-internal-execution-context-1 
+database [default] connected at jdbc:mysql://localhost:3306/tempmonDB?characterEncoding=UTF-8
+
+2014-06-04 10:49:55,138 - [INFO] - from play in play-internal-execution-context-1 
+Starting application default Akka system.
+
+2014-06-04 10:49:55,140 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2014-06-04 10:50:22,162 - [INFO] - from play in play-internal-execution-context-1 
+Shutdown application default Akka system.
+
+2014-06-04 10:50:25,515 - [INFO] - from play in play-internal-execution-context-1 
+database [default] connected at jdbc:mysql://localhost:3306/tempmonDB?characterEncoding=UTF-8
+
+2014-06-04 10:50:25,543 - [INFO] - from play in play-internal-execution-context-1 
+Starting application default Akka system.
+
+2014-06-04 10:50:25,550 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2014-06-04 10:51:55,238 - [INFO] - from play in play-internal-execution-context-1 
+Shutdown application default Akka system.
+
+2014-06-04 10:51:58,371 - [INFO] - from play in play-internal-execution-context-1 
+database [default] connected at jdbc:mysql://localhost:3306/tempmonDB?characterEncoding=UTF-8
+
+2014-06-04 10:51:58,390 - [INFO] - from play in play-internal-execution-context-1 
+Starting application default Akka system.
+
+2014-06-04 10:51:58,393 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2014-06-04 11:41:13,509 - [INFO] - from play in pool-4-thread-5 
+Shutdown application default Akka system.
+

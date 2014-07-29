@@ -1,0 +1,115 @@
+@(currentPage: Page[ContainerListView], currentOrderBy: Int, currentFilter: String, user: User)(implicit flash: play.api.mvc.Flash)
+
+@import java.util.{Date}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+  routes.ContainerController.list(
+    newPage, 
+    newOrderBy.map { orderBy =>
+      if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+    }.getOrElse(currentOrderBy), 
+    currentFilter
+  ) 
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(orderBy: Int, title: String) = {
+<th>
+  <span>@title</span>
+</th>
+}
+
+@main(user = user) {
+<sectionHeader>
+  <headerLeft>
+    Container List
+  </headerLeft>
+  <headerRight>
+    @helper.form(action=routes.ContainerController.list(), 'style -> "display:inline-block;") {
+    <input style="display:inline-block;" type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by container name...">
+    <input style="display:inline-block;" type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+    }
+    <a style="display:inline-block;" class="btn success" id="add" href="@routes.ContainerController.create()">
+      Add a new container
+    </a> 
+  </headerRight>
+</sectionHeader>
+
+<sectionBody>
+  <table class="containers zebra-striped">
+    @Option(currentPage.items).filterNot(_.isEmpty).map { containers => 
+    <thead>
+      <tr>
+	@header(1, "Container ID")
+	@header(2, "Container Name")
+        @header(3, "Temperature")
+        @header(4, "Container Status")
+        @header(5, "Last Read Time")
+      </tr>
+    </thead>
+    <tbody>
+      @containers.map { 
+      case container => {
+      <tr class="standard">
+	<td>
+	  @container.index
+	</td>
+        <td> 
+	  <a href="@routes.ContainerController.details(index=container.index)">
+	    @container.name
+	  </a> 
+	</td>
+	<td>
+	  @container.lastReadTemperature.getOrElse { <em>-</em> }
+	</td>
+	<td>
+	  @container.lastReadStatus.getOrElse { <em>-</em> }
+	</td>
+	<td>
+	  @container.lastReadTime.getOrElse { <em>-</em> }
+	</td>
+      </tr>
+      }
+      }    
+    </tbody>
+  </table>
+</sectionBody>
+<sectionFooter style="margin-left: 35%">
+      <ul class="pagination">
+	@currentPage.prev.map { page =>
+	<li class="prev">
+          <a href="@link(page)">&larr; Previous</a>
+	</li> 
+	}.getOrElse {
+	<li class="prev disabled">
+          <a>&larr; Previous</a>
+	</li>
+	}
+	<li class="current">
+          <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + containers.size) of @currentPage.total</a>
+	</li>	
+	@currentPage.next.map { page =>
+	<li class="next">
+          <a href="@link(page)">Next &rarr;</a>
+	</li> 
+	}.getOrElse {
+	<li class="next disabled">
+          <a>Next &rarr;</a>
+	</li>          
+	}
+      </ul>
+</sectionFooter>
+  }.getOrElse {
+  <div class="well">
+    <em style="margin-left:45%">Nothing to display</em>
+  </div>
+  }  
+}
+      
+      
+      

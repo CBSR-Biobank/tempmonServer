@@ -1,0 +1,11 @@
+[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/routes~,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/routes~)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/application.conf,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/application.conf)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/evolutions,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/evolutions)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/routes,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/routes)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/application.conf~,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/application.conf~)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/generated.keystore,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/generated.keystore)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/play.plugins,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/play.plugins)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/evolutions/default,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/evolutions/default)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/evolutions/default/1.sql,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/evolutions/default/1.sql)[0m
+[0m[[0mdebug[0m] [0m	(/home/connor/workspace/ScalaTempmon/conf/evolutions/default/2.sql,/home/connor/workspace/ScalaTempmon/target/scala-2.10/classes/evolutions/default/2.sql)[0m
