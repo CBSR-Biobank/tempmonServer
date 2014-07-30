@@ -2,9 +2,9 @@ package utils
 
 import models._
 
-import java.util.{Date}
-import java.util.{Calendar}
-import java.nio.file.{Path, Paths, Files}
+import org.joda.time.DateTime
+import com.github.nscala_time.time.Imports._
+import java.nio.file.{ Path, Paths, Files }
 import com.github.tototoshi.csv._
 
 import scala.io.Source
@@ -16,6 +16,9 @@ import play.api.Play.current
 
 object CSV {
   val projectRoot: String = current.path.toString()
+
+  val dateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss z yyyy")
+
   /*
    * Escape line breaks, double quotes and commas in the given string with
    * double quotes
@@ -43,29 +46,25 @@ object CSV {
   }
 
   def recordReading (
-    id: Long, 
-    email: String, 
-    temperature: Double, 
-    status: String, 
-    time: Date
+    id: Long,
+    email: String,
+    temperature: Double,
+    status: String,
+    time: DateTime
   ) {
     val listNum = User.getListNum(email)
     if (listNum != 0) {
-      val c: Calendar = Calendar.getInstance()
-      c.setTime(time)
+      val year = time.year
+      val month = time.month
+      val day = time.day
 
-      val year = c.get(Calendar.YEAR).toString
-      // calendar month off by 1, January = 0th month according to Java devs
-      val month = (c.get(Calendar.MONTH) + 1).toString
-      val day = c.get(Calendar.DAY_OF_MONTH).toString
-
-      var path: String = projectRoot+"/logs/container-lists/"+listNum.toString+"/containers/"+id.toString+"/"+year+"/"+month+"/"
+      var path = s"$projectRoot/logs/container-lists/$listNum/containers/$id/$year/$month/"
 
       Files.createDirectories(Paths.get(path))
-      path = path+day+"-"+month+"-"+year+".csv"
+      path = s"$path$day-$month-$year.csv"
 
       val writer = CSVWriter.open(path, append = true)
-      writer.writeRow(List(temperature.toString, status, time.toString))
+      writer.writeRow(List(temperature.toString, status, dateFormat.print(time)))
       writer.close()
     }
   }
@@ -75,26 +74,16 @@ object CSV {
     email: String,
     temperature: Double,
     status: String,
-    time: Date,
+    time: DateTime,
     note: String
   ) = {
     val listNum = User.getListNum(email)
     if (listNum != 0) {
-      val c: Calendar = Calendar.getInstance()
-      c.setTime(time)
-
-      val year = c.get(Calendar.YEAR).toString
-      // calendar month off by 1, January = 0th month according to Java devs
-      val month = (c.get(Calendar.MONTH) + 1).toString
-      val day = c.get(Calendar.DAY_OF_MONTH).toString
-
-      var path: String = projectRoot+"/logs/container-lists/"+listNum.toString+"/containers/"+index.toString+"/"+year+"/"+month+"/"
-
-      val fullPath = path+day+"-"+month+"-"+year+".csv"
-
-      val df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
-      val readTime = df.format(c.getTime())
-
+      val year = time.year
+      val month = time.month
+      val day = time.day
+      val path = s"$projectRoot/logs/container-lists/$listNum/containers/$index/$year/$month/"
+      val fullPath = s"$path$day-$month-$year.csv"
       val escapedNote = escapeCharacters(note)
 
       try {
@@ -102,11 +91,10 @@ object CSV {
         val linesIn = file.getLines.toArray
         file.close()
 
-        val replace = temperature.toString+","+status+","+readTime
+        val replace = s"$temperature,$status,${dateFormat.print(time)}"
 
-        val linesOut = linesIn.map {
-          case line if line.startsWith(replace) => line + "," + escapedNote
-          case x => x
+        val linesOut = linesIn.map { line =>
+          if (line.startsWith(replace)) { s"$line,$escapedNote" } else { line }
         }
 
         val out = new PrintWriter(fullPath);

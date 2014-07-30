@@ -1,25 +1,25 @@
 @(form: Form[(String,String)])(implicit flash: Flash)
-@main(new User("", "", "")) {
+@main(new User(None, "", "", "")) {
 <html>
   <head>
     <title>CBSR Tempmon</title>
   </head>
-  <body>  
+  <body>
     @helper.form(routes.Application.authenticate) {
     <h1>Sign in</h1>
-    
+
     @form.globalError.map { error =>
     <p class="error">
       @error.message
     </p>
     }
-    
+
     @flash.get("success").map { message =>
     <p class="success">
       @message
     </p>
     }
-    
+
     <p>
       <input type="email" name="email" placeholder="Email" id="email" value="@form("email").value">
     </p>
@@ -30,7 +30,7 @@
       <button type="submit" id="loginbutton" class="btn primary">Login</button>
    </p>
     }
-    
+
   </body>
 </html>
 }

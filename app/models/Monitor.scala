@@ -9,25 +9,25 @@ import play.api.libs.json._
 import anorm._
 import anorm.SqlParser._
 
-case class Monitor(id: Pk[Long], manufacturer: String, name: String, 
+case class Monitor(id: Option[Long], manufacturer: String, name: String,
   productID: Long, vendorID: Long)
-  
+
 object Monitor {
   val defaultID = 1
   /**
    * Parse a Monitor from a ResultSet
    */
   val simple = {
-    get[Pk[Long]]("monitor.id") ~
+    get[Option[Long]]("monitor.id") ~
     get[String]("monitor.manufacturer") ~
     get[String]("monitor.name") ~
     get[Long]("monitor.product_id") ~
     get[Long]("monitor.vendor_id") map {
-      case id~manufacturer~name~productID~vendorID => 
+      case id~manufacturer~name~productID~vendorID =>
         Monitor(id, manufacturer, name, productID, vendorID)
     }
   }
-  
+
   /**
    * Construct the Map[String,String] needed to fill a select options set.
    */
@@ -38,7 +38,7 @@ object Monitor {
 
   /**
    * Find a monitor by a given id
-   * 
+   *
    * @param id ID of monitor to find
    */
   def findByID(id: Long): Option[Monitor] = {
@@ -51,7 +51,7 @@ object Monitor {
 
   /**
    * Create a JSON object representing monitor with given id
-   * 
+   *
    * @param id ID of monitor to JSONify
    */
   def toJson(id: Long): Option[JsObject] = {

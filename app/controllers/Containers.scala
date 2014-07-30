@@ -1,16 +1,12 @@
 package controllers
 
 import play.api._
-
 import play.api.mvc._
-
 import play.api.data._
 import play.api.data.Forms._
-
 import play.api.i18n.{Messages}
-
 import play.api.libs.json._
-
+import org.joda.time.DateTime
 import anorm._
 
 import models._
@@ -19,8 +15,6 @@ import views._
 import utils.DoubleFormat._
 import utils.CSV._
 import utils.Email._
-
-import java.util.{Date}
 
 /*
  * Manage container related operations.
@@ -56,7 +50,7 @@ object ContainerController extends Controller with Secured {
 
   /*
    * Made a form for notes instead of just using a single since in the future
-   * the note section may become more robust, wanted to be able to add to it 
+   * the note section may become more robust, wanted to be able to add to it
    * easily.
    */
   val noteForm = Form(
@@ -66,10 +60,10 @@ object ContainerController extends Controller with Secured {
   )
 
   /*
-   * Form for creating a new container. In reality clients won't function 
+   * Form for creating a new container. In reality clients won't function
    * without a temperatureExpected/Range, read frequency or monitor but I left
    * them as optional for reasons I can't really recall.
-   * 
+   *
    * @param user User making request (so no duplicate indices may be submitted)
    */
   def createContainerForm(user: User) = {
@@ -96,7 +90,7 @@ object ContainerController extends Controller with Secured {
    * @param orderBy Column to be sorted
    * @param filter Filter applied on container names
    */
-  def list(page: Int, orderBy: Int, filter: String) = IsAuthenticated { 
+  def list(page: Int, orderBy: Int, filter: String) = IsAuthenticated {
     username => implicit request =>
     User.getByEmail(username).map { user =>
       Ok(
@@ -107,8 +101,8 @@ object ContainerController extends Controller with Secured {
             filter=("%"+filter+"%"),
             orderBy=orderBy
           ),
-          orderBy, 
-          filter, 
+          orderBy,
+          filter,
           user
         )
       )
@@ -124,7 +118,7 @@ object ContainerController extends Controller with Secured {
    */
   def details(
     index: Long,
-    page: Int, 
+    page: Int,
     filterErrors: Int,
     orderBy: Int
   ) = IsAuthenticated {
@@ -161,7 +155,7 @@ object ContainerController extends Controller with Secured {
       Container.getOwnedByAdminByIndex(index, user.email).map { container =>
         Ok(
           html.editForm(
-            index, 
+            index,
             editContainerForm.fill(Container.toEdit(container)),
             Monitor.options,
             user
@@ -170,13 +164,13 @@ object ContainerController extends Controller with Secured {
       }.getOrElse(NotFound)
     }.getOrElse(Forbidden)
   }
-  
+
   /*
-   * Handle the 'edit form' submission 
+   * Handle the 'edit form' submission
    *
    * @param index Index of the container to edit
    */
-  def update(index: Long) = IsAuthenticated { 
+  def update(index: Long) = IsAuthenticated {
     username => implicit request =>
     User.getByEmail(username).map { user =>
       editContainerForm.bindFromRequest.fold(
@@ -199,7 +193,7 @@ object ContainerController extends Controller with Secured {
 
   /*
    * Display the edit note form for a reading
-   * 
+   *
    * @param index Index of the container with reading to edit
    * @param readID ID of the reading to edit
    */
@@ -227,7 +221,7 @@ object ContainerController extends Controller with Secured {
 
   /*
    * Handle the update note form submission
-   * 
+   *
    * @param index Index of the container with the reading to edit
    * @param readID ID of the reading to edit
    */
@@ -270,7 +264,7 @@ object ContainerController extends Controller with Secured {
       createContainerForm(user).bindFromRequest.fold(
         formWithErrors => BadRequest(
           html.createForm(formWithErrors,
-          Monitor.options, 
+          Monitor.options,
             user
           )
         ),
@@ -281,10 +275,10 @@ object ContainerController extends Controller with Secured {
       )
     }.getOrElse(Forbidden)
   }
-  
+
   /*
    * Handle container deletion.
-   * 
+   *
    * @param index Index of the container to delete
    */
   def delete(index: Long) = IsAuthenticated { username => _ =>
@@ -296,7 +290,7 @@ object ContainerController extends Controller with Secured {
 
   /*
    * Serve client with JSON object containing runtime specifications
-   * 
+   *
    * @param index Index of the container to turn to JSON
    */
   def JSONify(index: Long) = IsAuthenticated { username => _ =>
@@ -307,12 +301,12 @@ object ContainerController extends Controller with Secured {
 
   /*
    * Handle a JSON reading upload from a client process
-   * 
+   *
    * @param index Index of container the reading is for
    */
   def addReading(index: Long) = IsAuthenticated { username => request =>
     request.body.asJson.map { json =>
-      val time = new Date()
+      val time = DateTime.now
         (json \ "temperature").asOpt[Double].map { temperature =>
           val status = Container.getStatus(index, username, temperature)
           if (status contains "WARNING") {
@@ -336,8 +330,8 @@ object ContainerController extends Controller with Secured {
             recordReading(index, username, -10000, message, time)
 
             Ok("Update complete\n")
-          }.getOrElse { 
-            BadRequest("Bad parameters\n") 
+          }.getOrElse {
+            BadRequest("Bad parameters\n")
           }
         }
     }.getOrElse { BadRequest("Expecting JSON data\n") }

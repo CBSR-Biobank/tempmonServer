@@ -11,29 +11,38 @@ import java.security._
 
 import scala.util._
 
-case class User(email: String, name: String, password: String)
+case class User(id: Option[Long] = None, email: String, name: String, password: String)
 
 case class UserEmail(email: String)
 
-case class UserCreateData(email: String, nameFirst: String, nameLast: String, password: String, birthday: String, gender: String, country: String)
+case class UserCreateData(
+  email: String,
+  nameFirst: String,
+  nameLast: String,
+  password: String,
+  birthday: String,
+  gender: String,
+  country: String)
 
 case class AdminAddData(email: String)
 
 object User {
   // -- Parsers
-  
+
   /**
    * Parse a User from a ResultSet
    */
   val simple = {
+    get[Long]("user.id") ~
     get[String]("user.email") ~
     get[String]("user.name_first") ~
     get[String]("user.name_last") ~
     get[String]("user.password") map {
-      case email~name_first~name_last~password => User(email, name_first+" "+name_last, password)
+      case id~email~name_first~name_last~password =>
+        User(Some(id), email, s"$name_first $name_last", password)
     }
   }
-  
+
   val emailOnly = {
     get[String]("user.email") map {
       case email => UserEmail(email)
@@ -41,10 +50,10 @@ object User {
   }
 
   // -- Queries
-  
+
   /**
    * Retrieve a User from email.
-   * 
+   *
    * @param email Email of user in question
    */
   def getByEmail(email: String): Option[User] = {
@@ -54,12 +63,12 @@ object User {
       ).as(User.simple.singleOpt)
     }
   }
-  
+
   /*
-   * Basically get a user by email, but with the stipulation that they have 
+   * Basically get a user by email, but with the stipulation that they have
    * the given container list number. Saves having to query whether or not
    * the user found by email has a container list number.
-   * 
+   *
    * @param email Email of user to return
    * @param listNum Container list number of user
    */
@@ -67,9 +76,9 @@ object User {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          SELECT * FROM user 
+          SELECT * FROM user
 
-          WHERE email = {email} 
+          WHERE email = {email}
           AND container_list_number = {listNum}
         """
       ).on(
@@ -87,10 +96,10 @@ object User {
       SQL("select * from user").as(User.simple *)
     }
   }
-  
+
   /**
    * Authenticate a User.
-   * 
+   *
    * @param email Submitted email value
    * @param password Submitted password value
    */
@@ -98,7 +107,7 @@ object User {
     DB.withConnection { implicit connection =>
       SQL(
         """
-         select * from user where 
+         select * from user where
          email = {email} and password = {password}
         """
       ).on(
@@ -110,7 +119,7 @@ object User {
 
   /**
    * Verify that the given email/password pair are valid
-   * 
+   *
    * @param email Email to verify
    * @param password Password to verify
    */
@@ -118,9 +127,9 @@ object User {
     DB.withConnection { implicit connection =>
       val valid = SQL(
         """
-          SELECT EXISTS( 
-            SELECT u.email, 
-                   u.password 
+          SELECT EXISTS(
+            SELECT u.email,
+                   u.password
             FROM user as u
 
             WHERE email = {email}
@@ -135,10 +144,10 @@ object User {
       (valid == 1)
     }
   }
-   
+
   /**
    * Create a User.
-   * 
+   *
    * @param user Data required to create a new user
    */
   def create(user: UserCreateData) = {
@@ -154,8 +163,8 @@ object User {
             gender,
             country
           ) values (
-            {email}, 
-            {name_first}, 
+            {email},
+            {name_first},
             {name_last},
             {password},
             {birthday},
@@ -172,7 +181,7 @@ object User {
         'gender -> user.gender,
         'country -> user.country
       ).executeUpdate()
-      
+
       user
 
     }
@@ -181,10 +190,10 @@ object User {
   /*
    * retrieve the list number of the user with given email; returns the user's
    * list number if found or 0 if not (not very functional, I know)
-   * 
+   *
    * @param email Email to search for
    */
-  def getListNum(email: String): Int = { 
+  def getListNum(email: String): Int = {
     User.getByEmail(email).map { user =>
       DB.withConnection { implicit connection =>
         SQL (
@@ -198,7 +207,7 @@ object User {
 
   /*
    * Get all users with given container list number
-   * 
+   *
    * @param listNum Container list number to search by
    */
   def getByListNum(listNum: Long): List[UserEmail] = {
@@ -220,7 +229,7 @@ object User {
   }
 
   /*
-   * Add an admin, i.e. a user 
+   * Add an admin, i.e. a user
    */
   def addAdmin(admin: String, listNum: Long) = {
     DB.withConnection { implicit connection =>
@@ -236,7 +245,7 @@ object User {
             country,
             container_list_number
           ) values (
-            {email}, 
+            {email},
             "Fake",
             "Name",
             {password},

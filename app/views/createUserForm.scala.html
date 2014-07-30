@@ -3,8 +3,8 @@
 @import helper._
 @import utils._
 
-@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
-@main(new User("", "", "")) {
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+@main(new User(None, "", "", "")) {
 <sectionBody>
   <h1>New User</h1>
 
@@ -16,51 +16,51 @@
 
   @form(routes.UserController.create()) {
   <fieldset>
-    @inputText(userCreateForm("name_first"), 
+    @inputText(userCreateForm("name_first"),
     '_label -> "Given Name",
-    '_showConstraints -> userCreateForm.error("name_first").isDefined) 
+    '_showConstraints -> userCreateForm.error("name_first").isDefined)
 
-    @inputText(userCreateForm("name_last"), 
+    @inputText(userCreateForm("name_last"),
     '_label -> "Surname",
-    '_showConstraints -> userCreateForm.error("name_last").isDefined) 
+    '_showConstraints -> userCreateForm.error("name_last").isDefined)
 
-    @inputText(userCreateForm("email"), 
-    '_label -> "Email", 
+    @inputText(userCreateForm("email"),
+    '_label -> "Email",
     '_showConstraints -> userCreateForm.error("name_email").isDefined)
 
     <div style="margin-top:40px; margin-bottom:40px">
       @userCreateForm.error("password").map { error =>
         <div> @error.message </div>
       }
-      @inputPassword(userCreateForm("password._1"), 
+      @inputPassword(userCreateForm("password._1"),
       '_label -> "Password",
       '_showConstraints -> userCreateForm.error("password.main").isDefined)
 
-      @inputPassword(userCreateForm("password._2"), 
+      @inputPassword(userCreateForm("password._2"),
       '_label -> "Verify Password",
       '_showConstraints -> userCreateForm.error("password.confirm").isDefined)
     </div>
-    
+
     @select(
-      userCreateForm("gender"), 
+      userCreateForm("gender"),
       Array("M"->"Male", "F" ->"Female","O"->"Other"),
       '_label -> "Gender", '_default -> "---",
       '_showConstraints -> userCreateForm.error("gender").isDefined)
-    
+
     @inputDate(userCreateForm("birthday"),
     '_label -> "Date of Birth",
     '_showConstraints -> userCreateForm.error("birthday").isDefined)
-    
+
     @select(
-      userCreateForm("country"), 
+      userCreateForm("country"),
       htmlTools.countryCodes zip htmlTools.countries,
       '_label -> "Country", '_default -> "---",
-      '_showConstraints -> userCreateForm.error("country").isDefined)    
+      '_showConstraints -> userCreateForm.error("country").isDefined)
   </fieldset>
 
   <div class="actions">
-    <input type="submit" value="Submit" class="btn primary"> 
-    <a href="@routes.ContainerController.list()" class="btn">Cancel</a> 
+    <input type="submit" value="Submit" class="btn primary">
+    <a href="@routes.ContainerController.list()" class="btn">Cancel</a>
   </div>
   }
 </sectionBody>

@@ -26,7 +26,7 @@ object Global extends GlobalSettings {
         message.append(" #")
         message.append(container.index.toString)
         message.append("'s last reading was at ")
-        message.append(container.readTime.get.toString)
+        message.append(Container.timeFormatter.print(container.readTime.get))
         message.append("\r\n")
       }
 
@@ -38,9 +38,12 @@ object Global extends GlobalSettings {
   /*
    * Perform a check on containers, verifying no readings are overdue
    */
-  override def onStart(app: Application) {
-    Akka.system.scheduler.schedule(60.minutes, 60.minutes) {
-      notifyUsersOfLateReadings()
+  override def onStart(app: Application) = {
+    if (app.mode != Mode.Test) {
+      Akka.system.scheduler.schedule(60.minutes, 60.minutes) {
+        notifyUsersOfLateReadings()
+      }
     }
+    ()
   }
 }
