@@ -666,16 +666,17 @@ object Container
         Page(readings, page, offset, totalReadings)
       } else {
         val readings = SQL"""
-          select fr.read_temperature,
-                 fr.read_status,
-                 fr.read_time,
-                 fr.reading_id,
-                 fr.read_note
-          from container_readings as fr
+          SELECT cr.reading_id as id,
+                 cr.container_id,
+                 cr.read_temperature,
+                 cr.read_status,
+                 cr.read_time,
+                 cr.reading_id,
+                 cr.read_note
+          FROM container_readings cr
+          WHERE cr.container_id = ${container.id.get}
 
-          where fr.container_id = ${container.id.get}
-
-          order by fr.read_time desc
+          ORDER BY cr.read_time DESC
           LIMIT $pageSize OFFSET $offset;
           """.as(Container.reading *)
 

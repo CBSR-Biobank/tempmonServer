@@ -10,8 +10,8 @@
 ****************************************@
 @link(newPage: Int, newOrderBy: Option[Int] = None, showErrors: Int = 0) = @{
   routes.ContainerController.details(
-    index, 
-    newPage, 
+    index,
+    newPage,
     showErrors,
     newOrderBy.map { orderBy =>
       if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
@@ -40,13 +40,13 @@
     }
     <a class="btn success" id="add" href="@routes.ContainerController.edit(index)" style="margin-bottom:18px">
       Edit container
-    </a> 
+    </a>
   </headerRight>
 </sectionHeader>
 
 <sectionBody>
   <table class="containers zebra-striped">
-    @Option(currentPage.items).filterNot(_.isEmpty).map { readings => 
+    @Option(currentPage.items).filterNot(_.isEmpty).map { readings =>
     <thead>
       <tr>
         @header(1, "Temperature")
@@ -56,12 +56,12 @@
       </tr>
     </thead>
     <tbody>
-      @readings.map { 
+      @readings.map {
       case reading => {
 	@if(((reading.readStatus contains "WARNING") || (reading.readStatus contains "ERROR")) && !reading.readNote.isDefined) {
       <tr class="error">
-	} else { 
-      <tr class="standard"> 
+	} else {
+      <tr class="standard">
 	}
 	<td>
 	  @reading.readTemperature
@@ -70,7 +70,7 @@
 	  @reading.readStatus
 	</td>
 	<td>
-	  @reading.readTime
+	  @ContainerController.dateTimeToLocalTime(reading.readTime)
 	</td>
 	<td style="max-width:200px; overflow: hidden; text-overflow:ellipsis;">
 	  @reading.readNote
@@ -82,7 +82,7 @@
 	</td>
       </tr>
       }
-      }    
+      }
     </tbody>
   </table>
 </sectionBody>
@@ -91,7 +91,7 @@
 	@currentPage.prev.map { page =>
 	<li class="prev">
           <a href="@link(page, None, showErrors)">&larr; More recent</a>
-	</li> 
+	</li>
 	}.getOrElse {
 	<li class="prev disabled">
           <a>&larr; More recent</a>
@@ -100,15 +100,15 @@
 	<li class="current">
           <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + readings.size) of @currentPage.total</a>
 	</li>
-	
+
 	@currentPage.next.map { page =>
 	<li class="next">
           <a href="@link(page, None, showErrors)">Less recent &rarr;</a>
-	</li> 
+	</li>
 	}.getOrElse {
 	<li class="next disabled">
           <a>Less recent &rarr;</a>
-	</li>          
+	</li>
 	}
       </ul>
 </sectionFooter>
@@ -116,6 +116,6 @@
   <div class="well">
     <em style="margin-left:40%">Nothing to display</em>
   </div>
-  }  
+  }
 
 }

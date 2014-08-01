@@ -41,7 +41,7 @@
 	</td>
       </tr>
     </tbody>
-  </table> 
+  </table>
   <fieldset>
   @helper.form(action = routes.ContainerController.updateNote(index, readID)){
     @if(note.isDefined) {
@@ -51,8 +51,8 @@
       </div>
     }
     @helper.inputText(
-      noteForm("note"), 
-      'style -> "width: 700px; display:inline-block", 
+      noteForm("note"),
+      'style -> "width: 700px; display:inline-block",
       '_showConstraints -> false,
       '_label -> "Add note:"
     )

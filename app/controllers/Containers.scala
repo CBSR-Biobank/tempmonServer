@@ -8,6 +8,8 @@ import play.api.i18n.{Messages}
 import play.api.libs.json._
 import org.joda.time.DateTime
 import anorm._
+import org.joda.time.DateTime
+import org.joda.time.format.{ DateTimeFormat, DateTimeFormatter }
 
 import models._
 import views._
@@ -20,6 +22,12 @@ import utils.Email._
  * Manage container related operations.
  */
 object ContainerController extends Controller with Secured {
+
+  val timeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")
+
+  def dateTimeToLocalTime(time: DateTime): String = {
+    timeFormatter.print(time);
+  }
 
   /*
    * Display the dashboard.

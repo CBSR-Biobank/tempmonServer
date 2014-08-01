@@ -7,12 +7,12 @@
 ****************************************@
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
   routes.ContainerController.list(
-    newPage, 
+    newPage,
     newOrderBy.map { orderBy =>
       if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
-    }.getOrElse(currentOrderBy), 
+    }.getOrElse(currentOrderBy),
     currentFilter
-  ) 
+  )
 }
 
 @**********************************
@@ -36,13 +36,13 @@
     }
     <a style="display:inline-block;" class="btn success" id="add" href="@routes.ContainerController.create()">
       Add a new container
-    </a> 
+    </a>
   </headerRight>
 </sectionHeader>
 
 <sectionBody>
   <table class="containers zebra-striped">
-    @Option(currentPage.items).filterNot(_.isEmpty).map { containers => 
+    @Option(currentPage.items).filterNot(_.isEmpty).map { containers =>
     <thead>
       <tr>
 	@header(1, "Container ID")
@@ -53,16 +53,16 @@
       </tr>
     </thead>
     <tbody>
-      @containers.map { 
+      @containers.map {
       case container => {
       <tr class="standard">
 	<td>
 	  @container.index
 	</td>
-        <td> 
+        <td>
 	  <a href="@routes.ContainerController.details(index=container.index)">
 	    @container.name
-	  </a> 
+	  </a>
 	</td>
 	<td>
 	  @container.lastReadTemperature.getOrElse { <em>-</em> }
@@ -71,11 +71,11 @@
 	  @container.lastReadStatus.getOrElse { <em>-</em> }
 	</td>
 	<td>
-	  @container.lastReadTime.getOrElse { <em>-</em> }
+	  @container.lastReadTime.fold("<em>-</em>")(time => ContainerController.dateTimeToLocalTime(time))
 	</td>
       </tr>
       }
-      }    
+      }
     </tbody>
   </table>
 </sectionBody>
@@ -84,7 +84,7 @@
 	@currentPage.prev.map { page =>
 	<li class="prev">
           <a href="@link(page)">&larr; Previous</a>
-	</li> 
+	</li>
 	}.getOrElse {
 	<li class="prev disabled">
           <a>&larr; Previous</a>
@@ -92,15 +92,15 @@
 	}
 	<li class="current">
           <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + containers.size) of @currentPage.total</a>
-	</li>	
+	</li>
 	@currentPage.next.map { page =>
 	<li class="next">
           <a href="@link(page)">Next &rarr;</a>
-	</li> 
+	</li>
 	}.getOrElse {
 	<li class="next disabled">
           <a>Next &rarr;</a>
-	</li>          
+	</li>
 	}
       </ul>
 </sectionFooter>
@@ -108,8 +108,8 @@
   <div class="well">
     <em style="margin-left:45%">Nothing to display</em>
   </div>
-  }  
+  }
 }
-      
-      
-      
+
+
+
