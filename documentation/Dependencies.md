@@ -9,3 +9,6 @@ Play is an open source web application framework, written in Scala and Java, whi
 * [MySQL](http://www.mysql.com)
 
 A SQL relational database management system used to store the query model
+
+---
+[Back to top](../README.md)
